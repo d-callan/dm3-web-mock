@@ -1,6 +1,6 @@
 :root {
   --dm-primary: #57197f;     /* Deep purple */
-  --dm-secondary: #ff7f50;   /* Coral */
+  --dm-secondary: #e65d32;   /* Darker coral */
   --dm-accent: #00b4d8;      /* Mandrill blue */
   --dm-background: #f8f8f7;  /* Light warm gray background */
   --dm-text: #212121;        /* Dark text */
@@ -12,9 +12,9 @@
   --dm-primary-light: #7f3399;    /* Lighter purple for highlights */
 
   /* Secondary color variations */
-  --dm-secondary-dark: #e65600;   /* Darker coral for shadows */
-  --dm-secondary-darker: #cc4400;  /* Even darker coral for deep shadows */
-  --dm-secondary-light: #ff9966;   /* Lighter coral for highlights */
+  --dm-secondary-dark: #cc4422;   /* Darker coral for shadows */
+  --dm-secondary-darker: #aa2200;  /* Even darker coral for deep shadows */
+  --dm-secondary-light: #ff7f50;   /* Lighter coral for highlights */
 
   /* Accent color variations */
   --dm-accent-dark: #0096b4;      /* Darker mandrill blue for shadows */
