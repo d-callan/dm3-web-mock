@@ -93,19 +93,22 @@
     <div class="card">
       <h2 class="card-title">Upload a HyPhy JSON</h2>
       <input type="file" class="file-input" />
-      <button class="upload-button">Upload</button>
+      <button class="button">Upload</button>
+
+      <div class="section-divider"></div>
 
       <!-- Progress Bar -->
+      <h3>Upload Progress</h3>
       <div class="progress-bar">
         <div class="progress-bar-fill"></div>
       </div>
 
       <!-- Settings Section -->
-      <div class="settings-section">
+      <div class="section">
         <h3>Analysis Settings</h3>
         
         <!-- Toggle Switches -->
-        <div class="setting-item">
+        <div class="section-item">
           <label class="toggle">
             <span class="toggle-label">Enable Advanced Mode</span>
             <input type="checkbox" />
@@ -113,7 +116,7 @@
           </label>
         </div>
 
-        <div class="setting-item">
+        <div class="section-item">
           <label class="toggle">
             <span class="toggle-label">Auto-save Results</span>
             <input type="checkbox" />
@@ -122,7 +125,7 @@
         </div>
 
         <!-- Radio Buttons -->
-        <div class="setting-item">
+        <div class="section-item">
           <h4>Analysis Type</h4>
           <div class="radio-group">
             <label class="radio">
@@ -165,7 +168,7 @@
       </div>
 
       <!-- Table -->
-      <div class="table-section">
+      <div class="section">
         <h3>Recent Analyses</h3>
         <div class="table-container">
           <table class="retro-table">
