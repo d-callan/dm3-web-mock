@@ -1,12 +1,8 @@
-<script>
-  import { base } from '$app/paths';
-</script>
-
 <div class="container">
   <!-- Header -->
   <header class="header">
     <div class="logo-container">
-      <img src="{base}/images/dm_whole.png" alt="Datamonkey Logo" class="logo" />
+      <img src="./images/dm_whole.png" alt="Datamonkey Logo" class="logo" />
       <h1>Datamonkey</h1>
     </div>
     <nav>

@@ -20,7 +20,7 @@ const config = {
 		}),
 		// Required for GitHub Pages
 		paths: {
-			base: process.env.NODE_ENV === 'production' ? '/dm3-web-mock' : ''
+			base: '/dm3-web-mock'
 		}
 	}
 };
