@@ -21,6 +21,10 @@ const config = {
 		// Required for GitHub Pages
 		paths: {
 			base: '/dm3-web-mock'
+		},
+		// Handle hash links for static site
+		prerender: {
+			handleMissingId: 'ignore'
 		}
 	}
 };
