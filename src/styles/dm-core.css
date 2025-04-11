@@ -1,0 +1,76 @@
+/**
+ * Datamonkey Core Styles
+ * Core variables and base styles for the Datamonkey design system
+ */
+
+:root {
+  /* Color System */
+  --dm-primary: #57197f;     /* Deep purple */
+  --dm-secondary: #c43843;   /* Deep red */
+  --dm-accent: #00b4d8;      /* Mandrill blue */
+  --dm-background: #f8f8f7;  /* Light warm gray background */
+  --dm-text: #212121;        /* Dark text */
+  --dm-muted: #bcbcbb;       /* Muted gray */
+
+  /* Color Variations */
+  --dm-primary-dark: #331347;
+  --dm-primary-darker: #1a0a24;
+  --dm-primary-light: #7f3399;
+
+  --dm-secondary-dark: #a02d37;
+  --dm-secondary-darker: #7c232b;
+  --dm-secondary-light: #d85f69;
+
+  --dm-accent-dark: #0096b4;
+  --dm-accent-darker: #007a94;
+  --dm-accent-light: #48d6f2;
+
+  /* Spacing System */
+  --dm-spacing-xs: 0.25rem;   /* 4px */
+  --dm-spacing-sm: 0.5rem;    /* 8px */
+  --dm-spacing-md: 1rem;      /* 16px */
+  --dm-spacing-lg: 1.5rem;    /* 24px */
+  --dm-spacing-xl: 2rem;      /* 32px */
+
+  /* Typography */
+  --dm-font-mono: "VT323", "Share Tech Mono", monospace;
+  --dm-font-size-base: 16px;
+  --dm-line-height: 1.3;
+
+  /* Borders */
+  --dm-border-radius: 4px;
+  --dm-border-width: 2px;
+}
+
+/* Base Styles */
+.dm-app {
+  font-family: var(--dm-font-mono);
+  font-size: var(--dm-font-size-base);
+  line-height: var(--dm-line-height);
+  color: var(--dm-text);
+  background-color: var(--dm-background);
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: none;
+}
+
+/* Typography */
+.dm-text {
+  margin: 0;
+}
+
+.dm-text-xs { font-size: 0.75rem; }
+.dm-text-sm { font-size: 0.875rem; }
+.dm-text-md { font-size: 1rem; }
+.dm-text-lg { font-size: 1.25rem; }
+.dm-text-xl { font-size: 1.5rem; }
+
+/* Status Colors */
+.dm-status-success { color: var(--dm-primary); }
+.dm-status-running { color: var(--dm-accent); }
+.dm-status-error { color: var(--dm-secondary); }
+
+/* Utility Classes */
+.dm-text-center { text-align: center; }
+.dm-text-uppercase { text-transform: uppercase; }
+.dm-font-normal { font-weight: normal; }
+.dm-letter-spacing { letter-spacing: 0.5px; }

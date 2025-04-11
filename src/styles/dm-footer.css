@@ -1,0 +1,26 @@
+/**
+ * Footer Component
+ */
+
+.dm-footer {
+  margin-top: var(--dm-spacing-xl);
+  padding: var(--dm-spacing-lg);
+  border-top: var(--dm-border-width) solid #eee;
+}
+
+.dm-footer__content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dm-spacing-md);
+}
+
+.dm-footer__logo {
+  display: flex;
+  align-items: center;
+}
+
+.dm-footer__text {
+  display: flex;
+  align-items: center;
+}
