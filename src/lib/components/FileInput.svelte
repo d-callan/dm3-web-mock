@@ -1,6 +1,5 @@
 <script lang="ts">
   export let accept = '*';
-  export let label = 'Choose a file';
   export let buttonText = 'Upload';
   export let value: File | null = null;
 
@@ -13,16 +12,17 @@
 </script>
 
 <div class="dm-file-input">
-  <label class="dm-file-input__label">
+  <div class="dm-file-input__container">
     <input 
       type="file" 
-      class="dm-file-input__input" 
       {accept}
       on:change={handleFileSelect}
     />
-    <span class="dm-file-input__text">{value ? value.name : label}</span>
-  </label>
-  <button class="dm-button dm-button--wide" disabled={!value} on:click>
+    {#if value}
+      <span class="dm-file-input__text">{value.name}</span>
+    {/if}
+  </div>
+  <button class="dm-button dm-button--primary dm-button--block" disabled={!value} on:click>
     {buttonText}
   </button>
 </div>

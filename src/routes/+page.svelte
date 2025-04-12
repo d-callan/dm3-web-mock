@@ -46,8 +46,8 @@
   <Header />
 
   <Hero>
-    <Button variant="primary">Start an Analysis</Button>
-    <Button variant="secondary">Explore Methods</Button>
+    <Button variant="primary" size="xl">Start an Analysis</Button>
+    <Button variant="secondary" size="xl">Explore Methods</Button>
   </Hero>
 
   <!-- Tabs -->
@@ -63,19 +63,16 @@
     <Card title="Upload a HyPhy JSON">
       <FileInput 
         accept=".json"
-        label="Choose a HyPhy JSON file"
         buttonText="Upload File"
       />
 
-      <Divider margin="lg" />
-
       <!-- Progress Bar -->
-      <Section title="Upload Progress">
+      <Section title="Upload Progress" variant="card">
         <Progress value={uploadProgress} />
       </Section>
 
       <!-- Analysis Type -->
-      <Section title="Analysis Type">
+      <Section title="Analysis Type" variant="card">
         <Dropdown
           bind:value={selectedMethod}
           options={['SLAC', 'FEL', 'MEME', 'FUBAR', 'aBSREL']}
@@ -84,7 +81,7 @@
       </Section>
 
       <!-- Settings Section -->
-      <Section title="Analysis Settings">
+      <Section title="Analysis Settings" variant="card">
         <!-- Toggle Switches -->
         <SectionItem>
           <Toggle 
@@ -104,7 +101,7 @@
 
         <!-- Radio Buttons -->
         <SectionItem spacing="lg">
-          <Section title="Analysis Type" level="secondary">
+          <Section title="Analysis Type" level="secondary" variant="card">
             <RadioGroup
               name="analysis"
               bind:value={analysisType}
@@ -155,10 +152,10 @@
           />
         </FormGroup>
       </Form>
-    </Card>
 
-    <!-- Table Card -->
-    <Card title="Recent Analyses">
+      <Divider margin="lg" />
+
+      <!-- Recent Analyses Table -->
       <Table hover striped>
         <thead>
           <tr>

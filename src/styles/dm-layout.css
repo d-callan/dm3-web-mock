@@ -24,8 +24,6 @@
 /* Section */
 .dm-section {
   margin-top: var(--dm-spacing-xl);
-  padding-top: var(--dm-spacing-lg);
-  border-top: var(--dm-border-width) solid #eee;
 }
 
 .dm-section__title {

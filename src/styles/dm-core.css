@@ -16,14 +16,17 @@
   --dm-primary-dark: #331347;
   --dm-primary-darker: #1a0a24;
   --dm-primary-light: #7f3399;
+  --dm-primary-extra-light: #f3e5f5;
 
   --dm-secondary-dark: #a02d37;
   --dm-secondary-darker: #7c232b;
   --dm-secondary-light: #d85f69;
+  --dm-secondary-extra-light: #fdecea;
 
   --dm-accent-dark: #0096b4;
   --dm-accent-darker: #007a94;
   --dm-accent-light: #48d6f2;
+  --dm-accent-extra-light: #e3f2fd;
 
   /* Spacing System */
   --dm-spacing-xs: 0.25rem;   /* 4px */
@@ -63,11 +66,6 @@
 .dm-text-md { font-size: 1rem; }
 .dm-text-lg { font-size: 1.25rem; }
 .dm-text-xl { font-size: 1.5rem; }
-
-/* Status Colors */
-.dm-status-success { color: var(--dm-primary); }
-.dm-status-running { color: var(--dm-accent); }
-.dm-status-error { color: var(--dm-secondary); }
 
 /* Utility Classes */
 .dm-text-center { text-align: center; }
