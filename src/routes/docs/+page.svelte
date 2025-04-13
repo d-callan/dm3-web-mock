@@ -1,6 +1,7 @@
 <script lang="ts">
   import Page from '$lib/components/Page.svelte';
   import Text from '$lib/components/Text.svelte';
+  import Link from '$lib/components/Link.svelte';
   import Accordion from '$lib/components/Accordion.svelte';
   import AccordionItem from '$lib/components/AccordionItem.svelte';
 </script>
@@ -14,10 +15,10 @@
       <Text>Coming Soon!</Text>
     </AccordionItem>
     <AccordionItem id="api-access" title="API Access">
-      <Text>Find documentation for the OpenAPI Spec <a href="https://veg.github.io/api-datamonkey/" target="_blank" rel="noopener noreferrer">here</a>.</Text>
+      <Text>Find documentation for the OpenAPI Spec <Link href="https://veg.github.io/api-datamonkey/" external variant="primary">here</Link>.</Text>
     </AccordionItem>
     <AccordionItem id="methods-docs" title="Methods Documentation">
-      <Text>Find documentation for HyPhy and its methods <a href="http://help.datamonkey.org" target="_blank" rel="noopener noreferrer">here</a>.</Text>
+      <Text>Find documentation for HyPhy and its methods <Link href="http://help.datamonkey.org" external variant="primary">here</Link>.</Text>
     </AccordionItem>
     <AccordionItem id="data-format" title="Input Data Guidelines">
       <Text>Coming Soon!</Text>
