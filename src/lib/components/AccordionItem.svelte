@@ -22,13 +22,17 @@
   $: isOpen = $openItems.has(id);
 
   function toggle() {
-    $openItems = new Set(
-      isOpen
-        ? [...$openItems].filter(i => i !== id)
-        : multiple
-          ? [...$openItems, id]
-          : [id]
-    );
+    if (isOpen) {
+      $openItems = new Set([...$openItems].filter(i => i !== id));
+      // Remove hash if this item is being closed
+      if (window.location.hash === `#${id}`) {
+        history.pushState('', document.title, window.location.pathname + window.location.search);
+      }
+    } else {
+      $openItems = new Set(multiple ? [...$openItems, id] : [id]);
+      // Update URL hash when opening an item
+      window.location.hash = id;
+    }
   }
 </script>
 

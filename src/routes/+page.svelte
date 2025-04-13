@@ -14,7 +14,7 @@
 
   <Hero>
     <Button href="/app/analyses" variant="primary" size="xl" maxWidth="50%">Start an Analysis</Button>
-    <Button href="/app/docs" variant="secondary" size="xl" maxWidth="50%">Explore Methods</Button>
+    <Button href="/app/docs#methods-docs" variant="secondary" size="xl" maxWidth="50%">Explore Methods</Button>
   </Hero>
 
     <div class="dm-grid dm-grid--auto-fit">
@@ -120,7 +120,7 @@
 
     <Section title="TUTORIALS & EXAMPLES" center underline={false}>
       <Text align="center">Explore case studies, walkthroughs, and sample data to get the most out of Datamonkey.</Text>
-      <Button href="/app/docs" variant="primary" size="lg" maxWidth="50%" center>Browse Tutorials</Button>
+      <Button href="/app/docs#tutorials" variant="primary" size="lg" maxWidth="50%" center>Browse Tutorials</Button>
     </Section>
 
     <br>
