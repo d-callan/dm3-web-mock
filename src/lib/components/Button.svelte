@@ -4,13 +4,30 @@
   export let type: 'button' | 'submit' | 'reset' = 'button';
   export let disabled = false;
   export let wide = false;
+  export let maxWidth: string | undefined = undefined;
+  export let center = false;
+  export let href: string | undefined = undefined;
 </script>
 
-<button 
-  {type}
-  {disabled}
-  class="dm-button dm-button--{variant} dm-button--{size} {wide ? 'dm-button--wide' : ''}"
-  on:click
->
-  <slot />
-</button>
+<div class="button-wrapper {center ? 'button-wrapper--center' : ''}" style="{maxWidth ? `max-width: ${maxWidth}` : ''}">
+  {#if href}
+    <a
+      {href}
+      class="button-inner dm-button dm-button--{variant} dm-button--{size} {wide ? 'dm-button--wide' : ''}"
+      on:click
+    >
+      <slot />
+    </a>
+  {:else}
+    <button
+      {type}
+      {disabled}
+      class="button-inner dm-button dm-button--{variant} dm-button--{size} {wide ? 'dm-button--wide' : ''}"
+      on:click
+    >
+      <slot />
+    </button>
+  {/if}
+</div>
+
+

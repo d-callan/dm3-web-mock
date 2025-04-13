@@ -17,6 +17,10 @@
   align-items: start;
 }
 
+.dm-grid--three-columns {
+  grid-template-columns: repeat(3, 1fr);
+}
+
 .dm-grid--auto-fit {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 32rem), 1fr));
 }

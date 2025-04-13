@@ -1,247 +1,145 @@
 <script lang="ts">
-  import { base } from '$app/paths';
-  import { slide } from 'svelte/transition';
-  import Header from '$lib/components/Header.svelte';
+  import Page from '$lib/components/Page.svelte';
   import Hero from '$lib/components/Hero.svelte';
-  import Card from '$lib/components/Card.svelte';
-  import Dropdown from '$lib/components/Dropdown.svelte';
-  import Section from '$lib/components/Section.svelte';
-  import SectionItem from '$lib/components/SectionItem.svelte';
-  import Toggle from '$lib/components/Toggle.svelte';
-  import RadioGroup from '$lib/components/RadioGroup.svelte';
-  import Progress from '$lib/components/Progress.svelte';
-  import FileInput from '$lib/components/FileInput.svelte';
-  import Divider from '$lib/components/Divider.svelte';
   import Button from '$lib/components/Button.svelte';
-  import Tabs from '$lib/components/Tabs.svelte';
-  import Form from '$lib/components/Form.svelte';
-  import FormField from '$lib/components/FormField.svelte';
-  import FormGroup from '$lib/components/FormGroup.svelte';
-  import Table from '$lib/components/Table.svelte';
-  import TableHeader from '$lib/components/TableHeader.svelte';
-  import TableCell from '$lib/components/TableCell.svelte';
-  import Accordion from '$lib/components/Accordion.svelte';
-  import AccordionItem from '$lib/components/AccordionItem.svelte';
+  import Card from '$lib/components/Card.svelte';
+  import Text from '$lib/components/Text.svelte';
   import List from '$lib/components/List.svelte';
   import ListItem from '$lib/components/ListItem.svelte';
-  import Text from '$lib/components/Text.svelte';
-  import Link from '$lib/components/Link.svelte';
-
-  let selectedMethod = 'Select Method';
-  let advancedMode = false;
-  let autoSave = false;
-  let analysisType = 'quick';
-  let uploadProgress = 70;
-  let activeTab = 'analyses';
-
-  const tabs = [
-    { id: 'analyses', label: 'Analyses' },
-    { id: 'upload', label: 'Upload Results' },
-    { id: 'summary', label: 'Summary' }
-  ];
+  import Divider from '$lib/components/Divider.svelte';
+  import Section from '$lib/components/Section.svelte';
 </script>
 
-<div class="dm-app dm-pattern">
-  <div class="dm-container">
-  <Header />
+<Page>
 
   <Hero>
-    <Button variant="primary" size="xl">Start an Analysis</Button>
-    <Button variant="secondary" size="xl">Explore Methods</Button>
+    <Button href="/app/analyses" variant="primary" size="xl" maxWidth="50%">Start an Analysis</Button>
+    <Button href="/app/docs" variant="secondary" size="xl" maxWidth="50%">Explore Methods</Button>
   </Hero>
 
-  <!-- Tabs -->
-  <Tabs
-    items={tabs}
-    bind:activeId={activeTab}
-    variant="underline"
-  />
-
-  <!-- Cards Container -->
-  <div class="dm-grid dm-grid--auto-fit">
-    <!-- Left Card -->
-    <Card title="Upload a HyPhy JSON">
-      <FileInput 
-        accept=".json"
-        buttonText="Upload File"
-      />
-
-      <!-- Progress Bar -->
-      <Section title="Upload Progress" variant="card">
-        <Progress value={uploadProgress} />
-      </Section>
-
-      <!-- Analysis Type -->
-      <Section title="Analysis Type" variant="card">
-        <Dropdown
-          bind:value={selectedMethod}
-          options={['SLAC', 'FEL', 'MEME', 'FUBAR', 'aBSREL']}
-          placeholder="Select Method"
-        />
-      </Section>
-
-      <!-- Settings Section -->
-      <Section title="Analysis Settings" variant="card">
-        <!-- Toggle Switches -->
-        <SectionItem>
-          <Toggle 
-            label="Enable Advanced Mode"
-            bind:checked={advancedMode}
-            name="advanced-mode"
-          />
-        </SectionItem>
-
-        <SectionItem>
-          <Toggle 
-            label="Auto-save Results"
-            bind:checked={autoSave}
-            name="auto-save"
-          />
-        </SectionItem>
-
-        <!-- Radio Buttons -->
-        <SectionItem spacing="lg">
-          <Section title="Analysis Type" level="secondary" variant="card">
-            <RadioGroup
-              name="analysis"
-              bind:value={analysisType}
-              options={[
-                { value: 'quick', label: 'Quick Analysis' },
-                { value: 'standard', label: 'Standard Analysis' },
-                { value: 'detailed', label: 'Detailed Analysis' }
-              ]}
-            />
-          </Section>
-        </SectionItem>
-      </Section>
-    </Card>
-
-    <!-- Right Card -->
-    <Card title="Configuration">
-      <Form onSubmit={data => console.log('Form data:', data)}>
-        <FormGroup title="Basic Settings">
-          <FormField
-            name="projectName"
-            label="Project Name"
-            placeholder="Enter project name"
-            required
-          />
-
-          <FormField
-            name="description"
-            label="Description"
-            type="textarea"
-            placeholder="Enter project description"
-          />
-        </FormGroup>
-
-        <FormGroup title="Advanced Settings" defaultOpen={false}>
-          <FormField
-            name="version"
-            label="Version Tag"
-            value="v1.0.0"
-            monospace
-          />
-
-          <FormField
-            name="apiKey"
-            label="API Key"
-            type="password"
-            placeholder="Enter API key"
-            monospace
-          />
-        </FormGroup>
-      </Form>
-
-      <Divider margin="lg" />
-
-      <!-- Recent Analyses Table -->
-      <Table hover striped>
-        <thead>
-          <tr>
-            <TableHeader>ID</TableHeader>
-            <TableHeader>Type</TableHeader>
-            <TableHeader>Status</TableHeader>
-            <TableHeader align="right">Time</TableHeader>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <TableCell monospace>#A1B2</TableCell>
-            <TableCell>Quick</TableCell>
-            <TableCell variant="success">Done</TableCell>
-            <TableCell align="right">2m ago</TableCell>
-          </tr>
-          <tr>
-            <TableCell monospace>#C3D4</TableCell>
-            <TableCell>Standard</TableCell>
-            <TableCell variant="running">Running</TableCell>
-            <TableCell align="right">5m ago</TableCell>
-          </tr>
-          <tr>
-            <TableCell monospace>#E5F6</TableCell>
-            <TableCell>Detailed</TableCell>
-            <TableCell variant="error">Failed</TableCell>
-            <TableCell align="right">12m ago</TableCell>
-          </tr>
-        </tbody>
-      </Table>
-    </Card>
-  </div>
-
-  <!-- Accordion Section -->
-  <Card title="Documentation">
-    <Accordion>
-      <AccordionItem id="docs" title="Analysis Documentation" defaultOpen>
-        <Text>The HyPhy analysis suite provides a comprehensive set of methods for detecting selection. Here's what you need to know:</Text>
+    <div class="dm-grid dm-grid--auto-fit">
+      <Card title="WHY DATAMONKEY?" minHeight="300px">
         <List>
           <ListItem>
-            <Link href="#/methods/quick" variant="primary">Quick Analysis</Link>: Best for initial screening, uses default parameters
+            <Text>🌐 Browser-based, no setup required</Text>
           </ListItem>
           <ListItem>
-            <Link href="#/methods/standard" variant="primary">Standard Analysis</Link>: Balanced approach with customizable options
+            <Text>📁 Works with standard input formats (FASTA, Newick)</Text>
           </ListItem>
           <ListItem>
-            <Link href="#/methods/detailed" variant="primary">Detailed Analysis</Link>: In-depth analysis with full parameter control
+            <Text>🧠 Powered by cutting-edge HyPhy models</Text>
+          </ListItem>
+          <ListItem>
+            <Text>📊 Publication-ready results</Text>
+          </ListItem>
+          <ListItem>
+            <Text>💻 Reproducible and open-source</Text>
           </ListItem>
         </List>
-        <Text variant="muted" size="sm">See our <Link href="#/documentation" variant="primary" size="sm">complete documentation</Link> for detailed explanations.</Text>
-      </AccordionItem>
+      </Card>
 
-      <AccordionItem id="faq" title="Frequently Asked Questions">
-        <Text>Common questions about using Datamonkey:</Text>
-        <List type="check" spacing="lg">
+      <Card title="HOW IT WORKS" minHeight="300px">
+        <List type="number">
           <ListItem>
-            What file formats are supported? We accept <Link href="#/formats/fasta">FASTA</Link>, <Link href="#/formats/nexus">NEXUS</Link>, and <Link href="#/formats/hyphy">HyPhy batch files</Link>
+            <Text>Upload your alignment and tree</Text>
           </ListItem>
           <ListItem>
-            How long do analyses take? Check our <Link href="#/performance">performance guide</Link> for estimates
+            <Text>Select an analysis method</Text>
           </ListItem>
           <ListItem>
-            Can I save my results? Yes, all results can be downloaded in multiple formats - see <Link href="#/export">export options</Link>
+            <Text>Run the job in the browser</Text>
+          </ListItem>
+          <ListItem>
+            <Text>View interactive results</Text>
           </ListItem>
         </List>
-      </AccordionItem>
+      </Card>
+    </div>
 
-      <AccordionItem id="troubleshooting" title="Troubleshooting">
-        <Text>If you encounter issues:</Text>
-        <List type="number" spacing="md">
-          <ListItem>
-            Check our <Link href="#/validation">file validation guide</Link>
-          </ListItem>
-          <ListItem>
-            Use our <Link href="#/tools/alignment">sequence alignment validator</Link>
-          </ListItem>
-          <ListItem>
-            Review our <Link href="#/errors">common error messages</Link>
-          </ListItem>
-          <ListItem>
-            Contact <Link href="#/support" variant="primary">support</Link> with your job ID if problems persist
-          </ListItem>
-        </List>
-        <Text variant="muted" size="sm">Visit our <Link href="#/troubleshooting" variant="primary" size="sm">troubleshooting guide</Link> for more help.</Text>
-      </AccordionItem>
-    </Accordion>
-  </Card>
-  </div>
-</div>
+<style>
+  .method-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--dm-spacing-sm);
+  }
+
+</style>
+    <Section title="AVAILABLE METHODS" center underline={false}>
+      <div class="dm-grid dm-grid--three-columns">
+        <Card>
+          <div class="method-card">
+            <Text size="lg" weight="bold">SLAC</Text>
+            <Divider margin="sm" />
+            <Text>Fast codon-based selection analysis</Text>
+          </div>
+        </Card>
+
+        <Card>
+          <div class="method-card">
+            <Text size="lg" weight="bold">FEL</Text>
+            <Divider margin="sm" />
+            <Text>Site-by-site selection testing</Text>
+          </div>
+        </Card>
+
+        <Card>
+          <div class="method-card">
+            <Text size="lg" weight="bold">MEME</Text>
+            <Divider margin="sm" />
+            <Text>Detect episodic selection</Text>
+          </div>
+        </Card>
+
+        <Card>
+          <div class="method-card">
+            <Text size="lg" weight="bold">FUBAR</Text>
+            <Divider margin="sm" />
+            <Text>Ultra-fast Bayesian inference</Text>
+          </div>
+        </Card>
+
+        <Card>
+          <div class="method-card">
+            <Text size="lg" weight="bold">aBSREL</Text>
+            <Divider margin="sm" />
+            <Text>Branch-site model testing</Text>
+          </div>
+        </Card>
+
+        <Card>
+          <div class="method-card">
+            <Text size="lg" weight="bold">RELAX</Text>
+            <Divider margin="sm" />
+            <Text>Test for selection relaxation</Text>
+          </div>
+        </Card>
+      </div>
+    </Section>
+
+    <Section title="TUTORIALS & EXAMPLES" center underline={false}>
+      <Text align="center">Explore case studies, walkthroughs, and sample data to get the most out of Datamonkey.</Text>
+      <Button href="/app/docs" variant="primary" size="lg" maxWidth="50%" center>Browse Tutorials</Button>
+    </Section>
+
+    <br>
+    <br>
+    <br>
+
+    <h3>LATEST UPDATES</h3>
+    <List>
+      <ListItem>
+        <Text>Run entirely in the browser with WebAssembly!</Text>
+      </ListItem>
+      <ListItem>
+        <Text>Organize jobs into analyses!</Text>
+      </ListItem>
+      <ListItem>
+        <Text>Now with example data and tutorials</Text>
+      </ListItem>
+      <ListItem>
+        <Text>All new look and feel, inspired by the original Datamonkey.org</Text>
+      </ListItem>
+    </List>
+</Page>

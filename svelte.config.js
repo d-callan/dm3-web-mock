@@ -20,7 +20,7 @@ const config = {
 		}),
 		// Required for GitHub Pages
 		paths: {
-			base: '/dm3-web-mock'
+			base: '/app'
 		},
 		// Handle hash links for static site
 		prerender: {

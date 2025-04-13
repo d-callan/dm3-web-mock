@@ -7,12 +7,14 @@
   export let level: 'primary' | 'secondary' = 'primary';
   export let spacing: 'sm' | 'md' | 'lg' = 'md';
   export let variant: 'card' | undefined = undefined;
+  export let underline = true;
+  export let center = false;
 
   const items = writable<HTMLElement[]>([]);
   setContext('section', { items, spacing });
 </script>
 
-<div class="dm-section dm-section--{level} {variant ? `dm-section--${variant}` : ''}">
+<div class="dm-section dm-section--{level} {variant ? `dm-section--${variant}` : ''} {center ? 'dm-section--center' : ''} {!underline ? 'dm-section--no-underline' : ''}">
   <div class="dm-section__header">
     <div class="dm-section__title">{title}</div>
     {#if subtitle}

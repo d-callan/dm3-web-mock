@@ -3,6 +3,12 @@
  * Reusable UI components for the Datamonkey design system
  */
 
+/* Header */
+.dm-header__logo {
+  text-decoration: none;
+  color: inherit;
+}
+
 /* Link */
 .dm-link {
   display: inline-flex;
@@ -210,6 +216,24 @@
 }
 
 /* Button */
+.button-wrapper {
+  display: block;
+  width: 100%;
+  margin-bottom: var(--dm-spacing-md);
+}
+
+.button-wrapper--center {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.button-inner {
+  display: inline-flex;
+  width: 100%;
+  justify-content: center;
+}
+
 .dm-button {
   display: inline-flex;
   align-items: center;
@@ -220,8 +244,10 @@
   background: var(--dm-background-light);
   color: var(--dm-text-dark);
   font-size: 1.5rem;
-  line-height: 1.5;
+  line-height: 1.2;
+  font-weight: 600;
   cursor: pointer;
+  text-decoration: none;
   transition: all 0.2s;
 }
 
@@ -251,6 +277,7 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 0.5rem 1.25rem;
   font-size: 22px;
+  font-weight: 300;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   box-shadow: 
@@ -287,13 +314,15 @@
 
 .dm-button--xl {
   padding: var(--dm-spacing-md) var(--dm-spacing-xl);
-  font-size: 1.25rem;
+  font-size: 1.5rem !important;
   min-width: 200px;
+  font-weight: 300;
 }
 
 .dm-button--lg {
   padding: var(--dm-spacing-md) var(--dm-spacing-lg);
-  font-size: 1.125rem;
+  font-size: 1.25rem !important;
+  font-weight: 300;
 }
 
 .dm-button--wide {
@@ -572,6 +601,27 @@ textarea.dm-form__input {
   background: var(--dm-primary);
 }
 
+/* Hero */
+.dm-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--dm-spacing-md);
+  padding: var(--dm-spacing-xl) var(--dm-spacing-lg);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.dm-hero .button-wrapper {
+  margin-bottom: 0;
+  width: auto;
+}
+
+.dm-hero .button-inner {
+  width: auto;
+}
+
 /* Section */
 .dm-section {
   margin-bottom: var(--dm-spacing-lg);
@@ -582,6 +632,19 @@ textarea.dm-form__input {
 }
 
 .dm-section__header {
+  position: relative;
+  padding-bottom: var(--dm-spacing-sm);
+  margin-bottom: var(--dm-spacing-md);
+  border-bottom: 2px solid var(--dm-border);
+}
+
+.dm-section--center .dm-section__header {
+  text-align: center;
+}
+
+.dm-section--no-underline .dm-section__header {
+  border-bottom: none;
+  padding-bottom: 0;
   margin-bottom: var(--dm-spacing-sm);
 }
 
@@ -1563,10 +1626,12 @@ textarea.dm-form__input {
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
+  font-weight: 300;
 }
 
 .dm-hero__title-main {
   font-size: 64px;
+  font-weight: 300;
   text-transform: uppercase;
   letter-spacing: 1px;
   text-shadow: 2px 2px 0px var(--dm-primary-dark);
@@ -1943,6 +2008,13 @@ textarea.dm-form__input {
 
 .dm-table tbody tr:hover {
   background: rgba(255, 255, 255, 0.5);
+}
+
+/* Section Title */
+.dm-section-title {
+  font-weight: normal;
+  color: var(--dm-primary);
+  margin: var(--dm-spacing-lg) 0;
 }
 
 /* Toggle Component */

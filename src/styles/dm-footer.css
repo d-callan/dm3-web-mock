@@ -3,9 +3,10 @@
  */
 
 .dm-footer {
-  margin-top: var(--dm-spacing-xl);
-  padding: var(--dm-spacing-lg);
-  border-top: var(--dm-border-width) solid #eee;
+  margin-top: auto;
+  padding: var(--dm-spacing-lg) 0;
+  background: var(--dm-background);
+  border-top: 1px solid var(--dm-border-color);
 }
 
 .dm-footer__content {
@@ -15,12 +16,9 @@
   gap: var(--dm-spacing-md);
 }
 
-.dm-footer__logo {
-  display: flex;
-  align-items: center;
-}
-
 .dm-footer__text {
-  display: flex;
-  align-items: center;
+  color: var(--dm-muted);
+  font-size: 1.25rem;
+  font-family: var(--dm-font-mono);
+  letter-spacing: 0.5px;
 }
