@@ -41,7 +41,7 @@
   ];
 </script>
 
-<div class="dm-app">
+<div class="dm-app dm-pattern">
   <div class="dm-container">
   <Header />
 
