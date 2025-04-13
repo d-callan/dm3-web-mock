@@ -6,7 +6,12 @@
   import Link from '$lib/components/Link.svelte';
 </script>
 
-<Page title="Support">
+<Page 
+  title="Support"
+  breadcrumbs={[
+    { label: "Home", href: "/app" },
+    { label: "Support" }
+  ]}>
   <Accordion>
     <AccordionItem id="contact" title="Contact Us">
       <Text>To report a bug or request a feature, please open an issue on <Link href="https://github.com/veg/hyphy" external variant="primary">GitHub</Link>.</Text>

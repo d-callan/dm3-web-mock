@@ -3,6 +3,22 @@
  * Reusable UI components for the Datamonkey design system
  */
 
+/* App */
+.dm-app {
+  min-height: 100vh;
+  background: var(--dm-background);
+}
+
+.dm-layout {
+  min-height: inherit;
+  display: flex;
+  flex-direction: column;
+}
+
+.dm-main {
+  flex: 1;
+}
+
 /* Header */
 .dm-header__logo {
   text-decoration: none;
@@ -627,10 +643,35 @@ textarea.dm-form__input {
   padding: var(--dm-spacing-lg) 0;
 }
 
+.dm-page-breadcrumbs {
+  padding: 0 var(--dm-spacing-lg);
+  margin-bottom: var(--dm-spacing-md);
+}
+
 .dm-page-title {
   font-weight: 300;
   font-size: 2.5rem;
   margin-bottom: var(--dm-spacing-lg);
+}
+
+.dm-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--dm-spacing-lg);
+  padding: 0 var(--dm-spacing-lg);
+}
+
+.dm-page-header .dm-page-title {
+  margin-bottom: 0;
+}
+
+/* Placeholder */
+.dm-placeholder {
+  padding: var(--dm-spacing-xl);
+  background: var(--dm-background-light);
+  border: 2px dashed var(--dm-border-color);
+  border-radius: var(--dm-radius-lg);
 }
 
 /* Section */

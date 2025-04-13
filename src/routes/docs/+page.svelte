@@ -6,7 +6,12 @@
   import AccordionItem from '$lib/components/AccordionItem.svelte';
 </script>
 
-<Page title="Documentation">
+<Page 
+  title="Documentation"
+  breadcrumbs={[
+    { label: "Home", href: "/app" },
+    { label: "Documentation" }
+  ]}>
   <Accordion>
     <AccordionItem id="getting-started" title="Getting Started">
       <Text>Coming Soon!</Text>
