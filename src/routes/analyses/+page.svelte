@@ -2,13 +2,11 @@
   import Page from '$lib/components/Page.svelte';
   import Button from '$lib/components/Button.svelte';
   import Card from '$lib/components/Card.svelte';
-  import Link from '$lib/components/Link.svelte';
   import Table from '$lib/components/Table.svelte';
   import Text from '$lib/components/Text.svelte';
   import { analyses, removeAnalysis } from '$lib/stores/analyses';
-  import type { Analysis } from '$lib/stores/analyses';
   import { jobs, removeJob } from '$lib/stores/jobs';
-  import type { Job } from '$lib/stores/jobs';
+  import { base } from '$app/paths';
 
   // Function to pretty-print JSON configuration
   function formatConfiguration(config: any): string {
@@ -142,11 +140,11 @@
 <Page 
   title="My Analyses"
   breadcrumbs={[
-    { label: "Home", href: "/app" },
+    { label: "Home", href: `${base}` },
     { label: "My Analyses" }
   ]}>
   <div slot="header">
-    <Button href="/app/analyses/new" variant="primary" size="lg" maxWidth="160px">Start New Analysis</Button>
+    <Button href={`${base}/analyses/new`} variant="primary" size="lg" maxWidth="160px">Start New Analysis</Button>
   </div>
 
   <div class="analyses-container">
@@ -182,7 +180,7 @@
                       size="sm" 
                       maxWidth={"50px"}
                       disabled={analysis.sourceType === 'imported_json'}
-                      href={`/app/analyses/${analysis.id}/jobs/new`}
+                      href={`${base}/analyses/${analysis.id}/jobs/new`}
                     >
                       Add Job
                     </Button>

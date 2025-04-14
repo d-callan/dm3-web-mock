@@ -12,6 +12,7 @@
   import { addAnalysis, addJobIdToAnalysis } from '$lib/stores/analyses';
   import { addJob as addJobToStore } from '$lib/stores/jobs';
   import { onMount } from 'svelte';
+  import { base } from '$app/paths';
 
   let activeSection = 'import';
 
@@ -59,7 +60,7 @@
         datasetId: data.analysisId,
         sourceType: 'imported_id'
       });
-      goto('/app/analyses');
+      goto(`${base}/analyses`);
     } else {
       // TODO: write functions to parse JSON files
       // In a real app, we would parse the JSON file here
@@ -79,7 +80,7 @@
         resultsUrl: '/analyses/view'
       });
       addJobIdToAnalysis(analysisId, jobId);
-      goto('/app/analyses');
+      goto(`${base}/analyses`);
     }
   }
 
@@ -91,7 +92,7 @@
       datasetId: crypto.randomUUID(), // Temporary, should come from alignment file
       sourceType: 'new'
     });
-    goto('/app/analyses');
+    goto(`${base}/analyses`);
   }
 
   const importOptions = [
@@ -103,8 +104,8 @@
 <Page 
   title="Start New Analysis"
   breadcrumbs={[
-    { label: "Home", href: "/app" },
-    { label: "My Analyses", href: "/app/analyses" },
+    { label: "Home", href: `${base}` },
+    { label: "My Analyses", href: `${base}/analyses` },
     { label: "Start New Analysis" }
   ]}>
 

@@ -17,7 +17,7 @@
   import { methods } from '$lib/data/methods';
   import { methodParameters } from '$lib/data/methodParameters';
   import type { ParameterDefinition } from '$lib/data/methodParameters';
-  import { onMount } from 'svelte';
+  import { base } from '$app/paths';
 
   // Get the analysis ID from the URL
   const analysisId = $page.params.id;
@@ -91,7 +91,7 @@
       });
     });
 
-    goto(`/app/analyses`);
+    goto(`${base}/analyses`);
   }
 
   let wasm = true;
@@ -101,9 +101,9 @@
   title="Add Job"
   breadcrumbs={[
     { label: "Home", href: "/" },
-    { label: "My Analyses", href: "/app/analyses" },
+    { label: "My Analyses", href: `${base}/analyses` },
     { label: analysis?.name || "Analysis", href: undefined },
-    { label: "New Job", href: `/app/analyses/${analysisId}/jobs/new` }
+    { label: "New Job", href: `${base}/analyses/${analysisId}/jobs/new` }
   ]}
 >
   <div class="container">
