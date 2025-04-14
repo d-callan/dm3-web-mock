@@ -12,10 +12,10 @@
 <div class="button-wrapper {center ? 'button-wrapper--center' : ''}" style="{maxWidth ? `max-width: ${maxWidth}` : ''}">
   {#if href}
     <a
-      {href}
+      href={disabled ? undefined : href}
       aria-disabled={disabled}
       class="button-inner dm-button dm-button--{variant} dm-button--{size} {wide ? 'dm-button--wide' : ''} {disabled ? 'dm-button--disabled' : ''}"
-      on:click|preventDefault={disabled ? () => {} : undefined}
+      on:click={disabled ? (e) => e.preventDefault() : undefined}
     >
       <slot />
     </a>
