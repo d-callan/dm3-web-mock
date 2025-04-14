@@ -13,6 +13,9 @@
   import { analyses } from '$lib/stores/analyses';
   import { addJob } from '$lib/stores/jobs';
   import { methods } from '$lib/data/methods';
+  import { methodParameters } from '$lib/data/methodParameters';
+  import type { ParameterDefinition } from '$lib/data/methodParameters';
+  import { onMount } from 'svelte';
 
   // Get the analysis ID from the URL
   const analysisId = $page.params.id;
@@ -22,7 +25,9 @@
 
   // Track selected method
   let selectedMethod = '';
+  let selectedParams: Record<string, ParameterDefinition> = {};
   $: selectedMethodDescription = methods.find(method => method.id === selectedMethod)?.description;
+  $: selectedParams = selectedMethod ? methodParameters[selectedMethod] || {} : {};
 
   function handleMethodChange(event: CustomEvent<string>) {
     selectedMethod = event.detail;
@@ -88,9 +93,31 @@
           {/if}
           <Expandable title="Configuration">
             <div class="configuration">
-              <div class="configuration-field">
-                <TextBlock>Coming Soon!</TextBlock>
-              </div>
+              {#if Object.keys(selectedParams).length > 0}
+                <div class="parameters-list">
+                  <TextBlock size="md" variant="default">Available Parameters:</TextBlock>
+                  {#each Object.entries(selectedParams) as [key, param]}
+                    <div class="parameter-item">
+                      <TextBlock size="sm" variant="default"><strong>{param.name}</strong></TextBlock>
+                      <TextBlock size="sm" variant="muted">{param.description}</TextBlock>
+                      {#if param.type === 'enum' && param.enum}
+                        <TextBlock size="sm" variant="muted">Options: {param.enum.join(', ')}</TextBlock>
+                      {/if}
+                      {#if param.default !== undefined}
+                        <TextBlock size="sm" variant="muted">Default: {param.default}</TextBlock>
+                      {/if}
+                    </div>
+                  {/each}
+                </div>
+              {:else if selectedMethod}
+                <div class="configuration-field">
+                  <TextBlock>No parameters available for {methods.find(m => m.id === selectedMethod)?.name}.</TextBlock>
+                </div>
+              {:else}
+                <div class="configuration-field">
+                  <TextBlock>Select a method to view available parameters.</TextBlock>
+                </div>
+              {/if}
             </div>
           </Expandable>
           <Toggle
@@ -123,11 +150,27 @@
     gap: 0.25rem;
   }
 
+  .configuration {
+    padding: var(--dm-spacing-md);
+  }
+
+  .parameters-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dm-spacing-md);
+  }
+
+  .parameter-item {
+    padding: var(--dm-spacing-sm);
+    border-left: 2px solid var(--dm-primary-light);
+    padding-left: var(--dm-spacing-md);
+    margin-bottom: var(--dm-spacing-sm);
+  }
+
   .actions {
     display: flex;
     gap: var(--dm-spacing-md);
     margin-top: var(--dm-spacing-lg);
+    justify-content: flex-end;
   }
-
-
 </style>

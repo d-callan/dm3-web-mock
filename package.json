@@ -15,7 +15,8 @@
                 "clean-gen-types": "rm -r src/lib/model src/lib/api",
 		"mv-model": "mv model src/lib/model",
 		"mv-api": "mv api src/lib/api",
-		"update-generated-types": "run-s get-api gen-types clean-gen-types mv-model mv-api"
+		"generate-method-data": "node scripts/generate-method-data.js",
+		"update-generated-types": "run-s get-api gen-types clean-gen-types mv-model mv-api generate-method-data"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-static": "^3.0.8",
