@@ -9,7 +9,8 @@
   import FileInput from '$lib/components/FileInput.svelte';
   import TableOfContents from '$lib/components/TableOfContents.svelte';
   import { goto } from '$app/navigation';
-  import { addAnalysis } from '$lib/stores/analyses';
+  import { addAnalysis, addJobIdToAnalysis } from '$lib/stores/analyses';
+  import { addJob as addJobToStore } from '$lib/stores/jobs';
   import { onMount } from 'svelte';
 
   let activeSection = 'import';
@@ -53,21 +54,31 @@
       // Handle analysis ID submission
       // TODO: an api call, to an endpoint that doesnt yet exist
       addAnalysis({
-        method: 'Import by ID',
-        configuration: `ID: ${data.analysisId}`,
-        status: 'Done',
-        resultsUrl: '/analyses/view'
+        name: `Analysis ${data.analysisId}`,
+        description: `Imported analysis with ID: ${data.analysisId}`,
+        datasetId: data.analysisId,
+        sourceType: 'imported_id'
       });
       goto('/app/analyses');
     } else {
       // TODO: write functions to parse JSON files
       // In a real app, we would parse the JSON file here
-      addAnalysis({
-        method: 'Import from JSON',
-        configuration: 'TODO: Parse from JSON',
+      const analysisId = addAnalysis({
+        name: 'Imported Analysis',
+        description: 'Imported from HyPhy JSON file',
+        datasetId: 'TODO: Parse from JSON',
+        sourceType: 'imported_json'
+      });
+
+      // Create a completed job for this imported analysis
+      const jobId = addJobToStore({
+        analysisId,
+        method: 'TODO: Parse from JSON',
         status: 'Done',
+        configuration: 'TODO: Parse from JSON',
         resultsUrl: '/analyses/view'
       });
+      addJobIdToAnalysis(analysisId, jobId);
       goto('/app/analyses');
     }
   }
@@ -75,10 +86,10 @@
   function handleNewAnalysisSubmit(data: Record<string, any>) {
     // Handle new analysis submission
     addAnalysis({
-      method: 'New Analysis',
-      configuration: `Name: ${data.analysisName}\nDescription: ${data.description || 'None'}`,
-      status: 'Processing',
-      resultsUrl: '/analyses/view'
+      name: data.analysisName,
+      description: data.description || '',
+      datasetId: crypto.randomUUID(), // Temporary, should come from alignment file
+      sourceType: 'new'
     });
     goto('/app/analyses');
   }

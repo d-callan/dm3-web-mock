@@ -10,7 +10,7 @@
 </script>
 
 <div class="button-wrapper {center ? 'button-wrapper--center' : ''}" style="{maxWidth ? `max-width: ${maxWidth}` : ''}">
-  {#if href}
+  {#if href && !disabled}
     <a
       {href}
       class="button-inner dm-button dm-button--{variant} dm-button--{size} {wide ? 'dm-button--wide' : ''}"
@@ -29,5 +29,30 @@
     </button>
   {/if}
 </div>
+
+<style>
+  .button-wrapper {
+    display: inline-block;
+    width: 100%;
+  }
+
+  .button-wrapper--center {
+    text-align: center;
+  }
+
+  .button-inner {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  :global(.dm-button[disabled]) {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+</style>
 
 
