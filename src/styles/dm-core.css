@@ -34,6 +34,7 @@
   --dm-spacing-md: 1rem;      /* 16px */
   --dm-spacing-lg: 1.5rem;    /* 24px */
   --dm-spacing-xl: 2rem;      /* 32px */
+  --dm-spacing-xxl: 4rem;     /* 64px */
 
   /* Typography */
   --dm-font-mono: "VT323", "Share Tech Mono", monospace;

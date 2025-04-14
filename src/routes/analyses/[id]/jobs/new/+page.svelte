@@ -29,12 +29,29 @@
   }
 
   function handleSubmit(data: Record<string, any>) {
+    if (!selectedMethod) {
+      return; // Don't create a job if no method is selected
+    }
+
     const jobId = addJob({
       analysisId,
-      method: data.method,
+      method: methods.find(method => method.id === selectedMethod)?.name || '',
       status: 'Not Started',
       configuration: JSON.stringify(data.configuration || {}),
       resultsUrl: '/analyses/view'
+    });
+
+    // Add the job ID to the analysis
+    analyses.update(items => {
+      return items.map(item => {
+        if (item.id === analysisId) {
+          return {
+            ...item,
+            jobIds: [...item.jobIds, jobId]
+          };
+        }
+        return item;
+      });
     });
 
     goto(`/app/analyses`);

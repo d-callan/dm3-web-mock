@@ -10,11 +10,12 @@
 </script>
 
 <div class="button-wrapper {center ? 'button-wrapper--center' : ''}" style="{maxWidth ? `max-width: ${maxWidth}` : ''}">
-  {#if href && !disabled}
+  {#if href}
     <a
       {href}
-      class="button-inner dm-button dm-button--{variant} dm-button--{size} {wide ? 'dm-button--wide' : ''}"
-      on:click
+      aria-disabled={disabled}
+      class="button-inner dm-button dm-button--{variant} dm-button--{size} {wide ? 'dm-button--wide' : ''} {disabled ? 'dm-button--disabled' : ''}"
+      on:click|preventDefault={disabled ? () => {} : undefined}
     >
       <slot />
     </a>

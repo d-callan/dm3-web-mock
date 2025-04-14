@@ -41,3 +41,17 @@
     </div>
   </div>
 </section>
+
+<style>
+  .dm-hero__buttons {
+    display: flex;
+    justify-content: center;
+    gap: var(--dm-spacing-xxl);
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .dm-hero__buttons :global(a) {
+    flex: 0 1 400px;
+  }
+</style>

@@ -64,7 +64,16 @@
       {#each $analyses as analysis (analysis.id)}
         <div class="analysis-card">
           <Card>
-            <div class="analysis-header">
+            <div class="card-content">
+              <button
+                class="delete-button"
+                on:click={() => removeAnalysis(analysis.id)}
+                title="Delete Analysis"
+              >
+                <i class="fas fa-trash-alt" aria-hidden="true"></i>
+                <span class="sr-only">Delete Analysis</span>
+              </button>
+              <div class="analysis-header">
               <div class="analysis-content">
                 <div class="analysis-info">
                   <h2>{analysis.name || 'Unnamed Analysis'}</h2>
@@ -81,7 +90,7 @@
                     <Button 
                       variant="primary" 
                       size="sm" 
-                      maxWidth={analysis.sourceType === 'imported_json' ? "100px" : "50px"}
+                      maxWidth={"50px"}
                       disabled={analysis.sourceType === 'imported_json'}
                       href={`/app/analyses/${analysis.id}/jobs/new`}
                     >
@@ -89,16 +98,6 @@
                     </Button>
                   </div>
                 </div>
-              </div>
-              <div class="delete-button-wrapper">
-                <button
-                  class="delete-button"
-                  on:click={() => removeAnalysis(analysis.id)}
-                  title="Delete Analysis"
-                >
-                  <i class="fas fa-trash-alt" aria-hidden="true"></i>
-                  <span class="sr-only">Delete Analysis</span>
-                </button>
               </div>
             </div>
 
@@ -137,6 +136,10 @@
     gap: var(--dm-spacing-lg);
   }
 
+  .analysis-card {
+    position: relative;
+  }
+
   .empty-state {
     padding: var(--dm-spacing-xl);
     text-align: center;
@@ -145,13 +148,14 @@
   .analysis-header {
     margin-bottom: var(--dm-spacing-lg);
     position: relative;
+    padding-top: var(--dm-spacing-xs);
   }
 
   .analysis-content {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    padding-right: var(--dm-spacing-xl);
+    padding-right: 6rem;
   }
 
   .analysis-info {
@@ -171,33 +175,36 @@
   }
 
   .analysis-actions {
-    margin-left: var(--dm-spacing-lg);
-  }
-
-  .delete-button-wrapper {
     position: absolute;
-    top: var(--dm-spacing-sm);
-    right: var(--dm-spacing-sm);
-  }
-
-  .delete-button {
-    background: none;
-    border: none;
-    padding: 0;
-    color: var(--dm-color-primary);
-    cursor: pointer;
-    font-size: 1rem;
+    top: var(--dm-spacing-xs);
+    right: 5rem;
     display: flex;
     align-items: center;
-    transition: color 0.2s ease;
-  }
-
-  .delete-button:hover {
-    color: var(--dm-color-primary-dark);
   }
 
   .button-wrapper {
-    display: inline-block;
+    display: flex;
+  }
+
+  .card-content {
+    position: relative;
+  }
+
+  .delete-button {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    padding: var(--dm-spacing-xs);
+    cursor: pointer;
+    color: var(--dm-text);
+    font-size: 1rem;
+    z-index: 1;
+  }
+
+  .delete-button:hover {
+    color: var(--dm-secondary);
   }
 
   .sr-only {
