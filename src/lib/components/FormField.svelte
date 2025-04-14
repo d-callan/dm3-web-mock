@@ -10,6 +10,7 @@
   export let required = false;
   export let rows = 3;
   export let monospace = false;
+  export let disabled = false;
 
   const { formData } = getContext('form') as { formData: Writable<Record<string, any>> };
 
@@ -26,6 +27,7 @@
       {placeholder}
       {required}
       {rows}
+      {disabled}
     ></textarea>
   {:else}
     <input
@@ -35,6 +37,7 @@
       bind:value
       {placeholder}
       {required}
+      {disabled}
     />
   {/if}
 </label>

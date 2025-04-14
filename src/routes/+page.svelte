@@ -8,6 +8,7 @@
   import ListItem from '$lib/components/ListItem.svelte';
   import Divider from '$lib/components/Divider.svelte';
   import Section from '$lib/components/Section.svelte';
+  import { methods } from '$lib/data/methods';
 </script>
 
 <Page>
@@ -68,53 +69,15 @@
 </style>
     <Section title="AVAILABLE METHODS" center underline={false}>
       <div class="dm-grid dm-grid--three-columns">
-        <Card>
-          <div class="method-card">
-            <Text size="lg" weight="bold">SLAC</Text>
-            <Divider margin="sm" />
-            <Text>Fast codon-based selection analysis</Text>
-          </div>
-        </Card>
-
-        <Card>
-          <div class="method-card">
-            <Text size="lg" weight="bold">FEL</Text>
-            <Divider margin="sm" />
-            <Text>Site-by-site selection testing</Text>
-          </div>
-        </Card>
-
-        <Card>
-          <div class="method-card">
-            <Text size="lg" weight="bold">MEME</Text>
-            <Divider margin="sm" />
-            <Text>Detect episodic selection</Text>
-          </div>
-        </Card>
-
-        <Card>
-          <div class="method-card">
-            <Text size="lg" weight="bold">FUBAR</Text>
-            <Divider margin="sm" />
-            <Text>Ultra-fast Bayesian inference</Text>
-          </div>
-        </Card>
-
-        <Card>
-          <div class="method-card">
-            <Text size="lg" weight="bold">aBSREL</Text>
-            <Divider margin="sm" />
-            <Text>Branch-site model testing</Text>
-          </div>
-        </Card>
-
-        <Card>
-          <div class="method-card">
-            <Text size="lg" weight="bold">RELAX</Text>
-            <Divider margin="sm" />
-            <Text>Test for selection relaxation</Text>
-          </div>
-        </Card>
+        {#each methods as method}
+          <Card>
+            <div class="method-card">
+              <Text size="lg" weight="bold">{method.name}</Text>
+              <Divider margin="sm" />
+              <Text>{method.description}</Text>
+            </div>
+          </Card>
+        {/each}
       </div>
     </Section>
 
