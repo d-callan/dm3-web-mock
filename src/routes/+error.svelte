@@ -1,11 +1,12 @@
 <script>
   import { page } from '$app/stores';
+  import { base } from '$app/paths';
 </script>
 
 <div class="error-container">
   <h1>{$page.status}: {$page.error?.message || 'Page not found'}</h1>
   <p>Sorry, we couldn't find what you were looking for.</p>
-  <a href="/" class="back-button">Go back home</a>
+  <a href="{base}/" class="back-button">Go back home</a>
 </div>
 
 <style>
