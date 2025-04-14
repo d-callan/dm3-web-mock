@@ -12,7 +12,9 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"get-api": "wget https://raw.githubusercontent.com/veg/api-datamonkey/refs/heads/master/dist/openapi.yaml -O openapi.yaml",
 		"gen-types": "npx @openapitools/openapi-generator-cli generate -i openapi.yaml -g typescript-jquery --skip-validate-spec",
-		"update-generated-types": "run-s get-api gen-types"
+                "rm-model": "rm -r src/model",
+		"mv-model": "mv model src/model",
+		"update-generated-types": "run-s get-api gen-types rm-model mv-model"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-static": "^3.0.8",
