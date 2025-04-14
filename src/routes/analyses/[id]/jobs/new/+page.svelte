@@ -1,11 +1,13 @@
 <script lang="ts">
   import Page from '$lib/components/Page.svelte';
+  import Expandable from '$lib/components/Expandable.svelte';
   import Form from '$lib/components/Form.svelte';
-  import FormField from '$lib/components/FormField.svelte';
-  import Dropdown from '$lib/components/Dropdown.svelte';
+  import Select from '$lib/components/Select.svelte';
   import Button from '$lib/components/Button.svelte';
   import Card from '$lib/components/Card.svelte';
   import TextBlock from '$lib/components/Text.svelte';
+  import Toggle from '$lib/components/Toggle.svelte';
+  import Help from '$lib/components/Help.svelte';
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
   import { analyses } from '$lib/stores/analyses';
@@ -37,6 +39,8 @@
 
     goto(`/app/analyses`);
   }
+
+  let wasm = true;
 </script>
 
 <Page 
@@ -52,16 +56,33 @@
     <Card title="Add Job">
       {#if analysis}
         <Form onSubmit={handleSubmit}>
-          <Dropdown
-            label="Choose HyPhy Method"
-            name="method"
-            value={selectedMethod}
-            options={methods.map(method => ({ value: method.id, label: method.name }))}
-            on:change={handleMethodChange}
-          />
+          <div class="method-select">
+            <Select
+              label="Choose HyPhy Method"
+              name="method"
+              value={selectedMethod}
+              options={methods.map(method => ({ value: method.id, label: method.name }))}
+              on:change={handleMethodChange}
+            />
+            <Help text="Coming Soon" />
+          </div>
           {#if selectedMethodDescription}
             <TextBlock variant="muted" size="sm">{selectedMethodDescription}</TextBlock>
           {/if}
+          <Expandable title="Configuration">
+            <div class="configuration">
+              <div class="configuration-field">
+                <TextBlock>Coming Soon!</TextBlock>
+              </div>
+            </div>
+          </Expandable>
+          <Toggle
+            label="Use WebAssembly"
+            description="Run HyPhy methods in the browser (rather than server)."
+            name="wasm"
+            bind:checked={wasm}
+            labelPosition="right"
+          />
           <div class="actions">
             <Button type="submit" variant="primary">Start Job</Button>
           </div>
@@ -77,6 +98,12 @@
   .container {
     max-width: 800px;
     margin: 0 auto;
+  }
+
+  .method-select {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.25rem;
   }
 
   .actions {

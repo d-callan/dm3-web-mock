@@ -1753,23 +1753,23 @@ textarea.dm-form__input {
 }
 
 /* Dropdown Component */
-.dm-dropdown {
+.dm-select {
   position: relative;
   display: inline-block;
 }
 
-.dm-dropdown__arrow {
+.dm-select__arrow {
   display: inline-block;
   margin-left: 0.5rem;
   font-size: 12px;
   transition: transform 0.2s;
 }
 
-.dm-dropdown__arrow--open {
+.dm-select__arrow--open {
   transform: rotate(180deg);
 }
 
-.dm-dropdown__trigger {
+.dm-select__trigger {
   min-width: 400px;
   padding: 0.5rem 0.75rem;
   font-family: inherit;
@@ -1805,7 +1805,7 @@ textarea.dm-form__input {
   -moz-osx-font-smoothing: none;
 }
 
-.dm-dropdown__trigger:hover {
+.dm-select__trigger:hover {
   background: var(--dm-primary);
   color: white;
   transform: translateY(2px);
@@ -1814,7 +1814,7 @@ textarea.dm-form__input {
     2px 2px 0px var(--dm-primary);
 }
 
-.dm-dropdown__menu {
+.dm-select__menu {
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
@@ -1846,7 +1846,7 @@ textarea.dm-form__input {
   -moz-osx-font-smoothing: none;
 }
 
-.dm-dropdown__item {
+.dm-select__item {
   display: block;
   width: 100%;
   padding: 0.5rem 0.75rem;
@@ -1864,7 +1864,7 @@ textarea.dm-form__input {
   position: relative;
 }
 
-.dm-dropdown__item:hover {
+.dm-select__item:hover {
   background: var(--dm-primary);
   color: white;
   /* Pixelated highlight effect */
@@ -1884,7 +1884,7 @@ textarea.dm-form__input {
   );
 }
 
-.dm-dropdown__item:hover::after {
+.dm-select__item:hover::after {
   content: '';
   position: absolute;
   top: 2px;

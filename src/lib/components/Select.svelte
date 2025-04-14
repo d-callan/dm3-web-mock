@@ -46,9 +46,9 @@
 
 <div class="select-field">
   <label for={name}>{label}</label>
-  <div class="dm-dropdown" bind:this={dropdownEl}>
+  <div class="dm-select" bind:this={dropdownEl}>
     <button 
-      class="dm-dropdown__trigger" 
+      class="dm-select__trigger" 
       on:click|stopPropagation={toggle}
       on:keydown={handleKeyDown}
       type="button"
@@ -59,11 +59,11 @@
       aria-expanded={isOpen}
     >
       {selectedLabel || 'Select an option'}
-      <span class="dm-dropdown__arrow" class:dm-dropdown__arrow--open={isOpen}>▼</span>
+      <span class="dm-select__arrow" class:dm-select__arrow--open={isOpen}>▼</span>
     </button>
     {#if isOpen}
     <div 
-      class="dm-dropdown__menu" 
+      class="dm-select__menu" 
       transition:slide={{ duration: 100 }}
       role="listbox"
       aria-label="Options"
@@ -71,8 +71,8 @@
       {#each options as option}
         <button 
           type="button"
-          class="dm-dropdown__item" 
-          class:dm-dropdown__item--selected={value === option.value}
+          class="dm-select__item" 
+          class:dm-select__item--selected={value === option.value}
           on:click|stopPropagation|preventDefault={() => select(option)}
           role="option"
           aria-selected={value === option.value}
@@ -101,16 +101,15 @@
     font-weight: 500;
   }
 
-  .dm-dropdown {
+  .dm-select {
     position: relative;
     width: 100%;
   }
 
-  .dm-dropdown__trigger {
+  .dm-select__trigger {
     width: 100%;
     padding: var(--dm-spacing-sm);
     background: var(--dm-background);
-    border: var(--dm-border-width) solid var(--dm-muted);
     border-radius: var(--dm-border-radius);
     color: var(--dm-text);
     font-family: var(--dm-font-mono);
@@ -124,34 +123,31 @@
     -moz-osx-font-smoothing: none;
   }
 
-  .dm-dropdown__trigger:hover:not(:disabled) {
+  .dm-select__trigger:hover:not(:disabled) {
     border-color: var(--dm-primary);
   }
 
-  .dm-dropdown__trigger:disabled {
+  .dm-select__trigger:disabled {
     background-color: var(--dm-background-disabled);
-    border-color: var(--dm-muted);
     color: var(--dm-text-disabled);
     cursor: not-allowed;
   }
 
-  .dm-dropdown__arrow {
+  .dm-select__arrow {
     transition: transform 0.2s;
     font-size: 0.8em;
-    color: var(--dm-muted);
   }
 
-  .dm-dropdown__arrow--open {
+  .dm-select__arrow--open {
     transform: rotate(180deg);
   }
 
-  .dm-dropdown__menu {
+  .dm-select__menu {
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
     background: var(--dm-background);
-    border: var(--dm-border-width) solid var(--dm-muted);
     border-radius: var(--dm-border-radius);
     margin-top: var(--dm-spacing-xs);
     max-height: 200px;
@@ -160,7 +156,7 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
-  .dm-dropdown__item {
+  .dm-select__item {
     width: 100%;
     padding: var(--dm-spacing-sm);
     border: none;
@@ -174,12 +170,12 @@
     -moz-osx-font-smoothing: none;
   }
 
-  .dm-dropdown__item:hover {
+  .dm-select__item:hover {
     background: var(--dm-primary-extra-light);
     color: var(--dm-primary);
   }
 
-  .dm-dropdown__item--selected {
+  .dm-select__item--selected {
     background: var(--dm-primary-light);
     color: var(--dm-primary);
   }
