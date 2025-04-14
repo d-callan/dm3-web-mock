@@ -43,6 +43,10 @@ export function removeJobsByAnalysisId(analysisId: string) {
   jobs.update(items => items.filter(item => item.analysisId !== analysisId));
 }
 
+export function removeJob(jobId: string) {
+  jobs.update(items => items.filter(item => item.id !== jobId));
+}
+
 export function getJobsByAnalysisId(analysisId: string) {
   let result: Job[] = [];
   jobs.subscribe(items => {

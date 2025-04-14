@@ -1,6 +1,7 @@
 <script lang="ts">
   import TableHeader from './TableHeader.svelte';
   import TableCell from './TableCell.svelte';
+  import type { ComponentType } from 'svelte';
 
   export let compact = false;
   export let hover = true;
@@ -13,6 +14,8 @@
     sortable?: boolean;
     variant?: 'default' | 'success' | 'warning' | 'error' | 'running';
     render?: (row: any) => string;
+    component?: ComponentType;
+    componentProps?: (row: any) => Record<string, any>;
   }> = [];
   export let data: Array<Record<string, any>> = [];
   export let sortColumn: string | null = null;
@@ -56,7 +59,9 @@
                 align={column.align || 'left'}
                 variant={column.variant || 'default'}
               >
-                {#if column.render}
+                {#if column.component}
+                  <svelte:component this={column.component} {...column.componentProps?.(row) || {}} />
+                {:else if column.render}
                   {@html column.render(row)}
                 {:else}
                   {row[column.key]}
