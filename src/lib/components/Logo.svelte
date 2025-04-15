@@ -5,7 +5,7 @@
 </script>
 
 <div class="dm-logo dm-logo--{size}">
-  <img src={`${base}/images/dm_whole.png`} alt="Datamonkey Logo" class="dm-logo__image" />
+  <img src={`${base}/images/logo.svg`} alt="Datamonkey Logo" class="dm-logo__image" />
   {#if showText}
     <h1 class="dm-logo__text">Datamonkey</h1>
   {/if}
