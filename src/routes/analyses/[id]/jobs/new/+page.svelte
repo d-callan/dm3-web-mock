@@ -100,7 +100,7 @@
 <Page 
   title="Add Job"
   breadcrumbs={[
-    { label: "Home", href: "/" },
+    { label: "Home", href: `${base}` },
     { label: "My Analyses", href: `${base}/analyses` },
     { label: analysis?.name || "Analysis", href: undefined },
     { label: "New Job", href: `${base}/analyses/${analysisId}/jobs/new` }

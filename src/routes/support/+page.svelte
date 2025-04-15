@@ -4,12 +4,13 @@
   import Page from '$lib/components/Page.svelte';
   import Text from '$lib/components/Text.svelte';
   import Link from '$lib/components/Link.svelte';
+  import { base } from '$app/paths';
 </script>
 
 <Page 
   title="Support"
   breadcrumbs={[
-    { label: "Home", href: "/app" },
+    { label: "Home", href: `${base}` },
     { label: "Support" }
   ]}>
   <Accordion>

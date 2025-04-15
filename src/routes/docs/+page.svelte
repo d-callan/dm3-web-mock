@@ -4,12 +4,13 @@
   import Link from '$lib/components/Link.svelte';
   import Accordion from '$lib/components/Accordion.svelte';
   import AccordionItem from '$lib/components/AccordionItem.svelte';
+  import { base } from '$app/paths';
 </script>
 
 <Page 
   title="Documentation"
   breadcrumbs={[
-    { label: "Home", href: "/app" },
+    { label: "Home", href: `${base}` },
     { label: "Documentation" }
   ]}>
   <Accordion>
