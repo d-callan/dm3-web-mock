@@ -11,16 +11,19 @@
   import Range from '$lib/components/Range.svelte';
   import Help from '$lib/components/Help.svelte';
   import { page } from '$app/stores';
-  import { goto } from '$app/navigation';
+  import { get } from 'svelte/store';
+  import { jobs } from '$lib/stores/jobs';
   import { analyses } from '$lib/stores/analyses';
   import { addJob } from '$lib/stores/jobs';
+  import { goto } from '$app/navigation';
   import { methods } from '$lib/data/methods';
   import { methodParameters } from '$lib/data/methodParameters';
   import type { ParameterDefinition } from '$lib/data/methodParameters';
+  import type { Job } from '$lib/stores/jobs';
   import { base } from '$app/paths';
 
   // Get the analysis ID from the URL
-  const analysisId = $page.params.id;
+  const analysisId = $page.params.analysisId;
   
   // Get the analysis details
   $: analysis = $analyses.find(a => a.id === analysisId);
@@ -65,17 +68,31 @@
     }
     
     // Combine form data with parameter values
-    const configuration = {
+    const configuration: Record<string, any> = { 
       ...paramValues,
       wasm: data.wasm
     };
 
-    const jobId = addJob({
+    // Create the job first to get the jobId
+    const jobId: string = addJob({ 
       analysisId,
       method: methods.find(method => method.id === selectedMethod)?.name || '',
       status: 'Not Started',
       configuration: JSON.stringify(configuration),
-      resultsUrl: '/analyses/view'
+      resultsUrl: '' // Will update this after getting the jobId
+    });
+
+    // Update the job with the correct resultsUrl now that we have the jobId
+    jobs.update((items: Job[]) => {
+      return items.map((item: Job) => {
+        if (item.id === jobId) {
+          return {
+            ...item,
+            resultsUrl: `${base}/analyses/${analysisId}/jobs/${jobId}/visualize`
+          };
+        }
+        return item;
+      });
     });
 
     // Add the job ID to the analysis
