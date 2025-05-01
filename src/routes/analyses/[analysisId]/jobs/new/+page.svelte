@@ -88,7 +88,7 @@
         if (item.id === jobId) {
           return {
             ...item,
-            resultsUrl: `${base}/analyses/${analysisId}/jobs/${jobId}/visualize`
+            resultsUrl: `${base}/analyses/${analysisId}/jobs/${jobId}/result`
           };
         }
         return item;

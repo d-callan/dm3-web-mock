@@ -8,6 +8,7 @@
   import { base } from '$app/paths';
   import { analyses } from '$lib/stores/analyses';
   import VisualizationSection from '$lib/components/VisualizationSection.svelte';
+  import Button from '$lib/components/Button.svelte';
 
   // Get the analysis ID and job ID from the URL
   const analysisId = $page.params.analysisId;
@@ -67,10 +68,14 @@
     { label: "My Analyses", href: `${base}/analyses` },
     { label: analysis?.name || "Analysis", href: undefined },
     { label: job?.id || "Job", href: `${base}/analyses/${analysisId}/jobs/${jobId}` }
-  ]}
->
+  ]}>
+  <!-- TODO: implement the download button for real-->
+  <div slot="header">
+    <Button href={`${base}/analyses/${analysisId}/jobs/${jobId}/download`} variant="primary" size="lg" maxWidth="160px">Download Results</Button>
+  </div>
+
   {#if error}
-    <div class="error">{error}</div>
+    <div class="error">Coming Soon!</div>
   {:else if !job}
     <div class="error">Job not found</div>
   {:else if !vizOptions}
@@ -84,7 +89,6 @@
           <VisualizationSection
             category={vizRegistry.VisualizationCategories[categoryId]}
             visualizations={visualizations}
-            glyphPath={`${base}`}
           />
         {/if}
       {/each}
@@ -94,7 +98,7 @@
 
 <style>
   .visualization-container {
-    padding: 20px;
+    padding: var(--dm-spacing-xl);
     max-width: 1200px;
     margin: 0 auto;
   }
