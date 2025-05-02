@@ -1,7 +1,7 @@
 <script lang="ts">
   import { get } from 'svelte/store';
   import { jobs } from '$lib/stores/jobs';
-  import * as vizRegistry from 'hyphy-eye/registry'
+  import * as vizRegistry from '@veg/hyphy-eye/registry'
   import { page } from '$app/stores';
   import type { Job } from '$lib/stores/jobs';
   import Page from '$lib/components/Page.svelte';
@@ -35,7 +35,15 @@
       }
     });
     
-    return categories;
+    // Filter out empty categories
+    const filteredCategories: Record<string, vizRegistry.Visualization[]> = {};
+    Object.entries(categories).forEach(([categoryId, vizzes]) => {
+      if (vizzes.length > 0) {
+        filteredCategories[categoryId] = vizzes;
+      }
+    });
+    
+    return filteredCategories;
   }
 
   // Get the analysis from the analysis store
@@ -46,17 +54,18 @@
   // Load results from localStorage
   $: if (job) {
     try {
+      // Get the method from the job
       const method = job.method as string;
       if (method in vizRegistry.HyPhyMethods) {
         vizOptions = vizRegistry.HyPhyMethods[method];
-        if (vizOptions) {
-          categorizedVisualizations = categorizeVisualizations(vizOptions.visualizations);
-        }
+        // Categorize the visualizations
+        categorizedVisualizations = categorizeVisualizations(vizOptions.visualizations);
       } else {
-        error = 'Invalid visualization method';
+        error = 'Visualization not yet supported for this HyPhy method';
       }
     } catch (e) {
-      error = 'Failed to load visualization options';
+      error = 'Failed to load visualizations';
+      console.error(e);
     }
   }
 </script>
@@ -68,50 +77,42 @@
     { label: "My Analyses", href: `${base}/analyses` },
     { label: analysis?.name || "Analysis", href: undefined },
     { label: job?.id || "Job", href: `${base}/analyses/${analysisId}/jobs/${jobId}` }
-  ]}>
+  ]}
+>
   <!-- TODO: implement the download button for real-->
   <div slot="header">
     <Button href={`${base}/analyses/${analysisId}/jobs/${jobId}/download`} variant="primary" size="lg" maxWidth="160px">Download Results</Button>
   </div>
 
   {#if error}
-    <div class="error">Coming Soon!</div>
-  {:else if !job}
-    <div class="error">Job not found</div>
-  {:else if !vizOptions}
-    <div class="loading">Loading visualization options...</div>
-  {:else}
-    <!-- TODO: change glyph attr in hyphy-eye to be only file name w no path -->
-    <!-- then change glyphPath here to be base/glyphs/ or just leave empty since thats the default-->
-    <div class="visualization-container">
+    <div class="error">{error}</div>
+  {/if}
+
+  {#if job && vizOptions}
+    <div class="visualizations">
       {#each Object.entries(categorizedVisualizations) as [categoryId, visualizations]}
-        {#if visualizations.length > 0}
-          <VisualizationSection
-            category={vizRegistry.VisualizationCategories[categoryId]}
-            visualizations={visualizations}
-          />
-        {/if}
+        <VisualizationSection
+          category={vizRegistry.VisualizationCategories[categoryId]}
+          visualizations={visualizations}
+          jobId={jobId}
+          analysisId={analysisId}
+        />
       {/each}
     </div>
   {/if}
 </Page>
 
 <style>
-  .visualization-container {
-    padding: var(--dm-spacing-xl);
-    max-width: 1200px;
-    margin: 0 auto;
+  .visualizations {
+    display: grid;
+    gap: 2rem;
+    padding: 1rem;
   }
 
   .error {
     color: red;
-    padding: 15px;
+    padding: 1rem;
+    border: 1px solid red;
     border-radius: 4px;
-    background: #ffebee;
-  }
-
-  .loading {
-    padding: 15px;
-    color: #666;
   }
 </style>

@@ -79,7 +79,8 @@
       method: methods.find(method => method.id === selectedMethod)?.name || '',
       status: 'Not Started',
       configuration: JSON.stringify(configuration),
-      resultsUrl: '' // Will update this after getting the jobId
+      resultsUrl: '', // Will update this after getting the jobId,
+      resultsData: null // Will update this after getting the jobId
     });
 
     // Update the job with the correct resultsUrl now that we have the jobId

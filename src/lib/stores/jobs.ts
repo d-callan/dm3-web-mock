@@ -7,6 +7,7 @@ export interface Job {
   status: string;
   configuration: string;
   resultsUrl: string;
+  resultsData: string | null; // Stores JSON string of results
   createdAt: string;
 }
 
@@ -39,6 +40,18 @@ export function addJob(job: Omit<Job, 'id' | 'createdAt'>) {
   return jobId;
 }
 
+export function updateJobResults(jobId: string, resultsJson: string) {
+  jobs.update(items => items.map(item => {
+    if (item.id === jobId) {
+      return {
+        ...item,
+        resultsData: resultsJson
+      };
+    }
+    return item;
+  }));
+}
+
 export function removeJobsByAnalysisId(analysisId: string) {
   jobs.update(items => items.filter(item => item.analysisId !== analysisId));
 }
@@ -49,9 +62,17 @@ export function removeJob(jobId: string) {
 
 export function getJobsByAnalysisId(analysisId: string) {
   let result: Job[] = [];
-  jobs.subscribe(items => {
-    result = items.filter(item => item.analysisId === analysisId);
-  })();
+  jobs.subscribe(value => {
+    result = value.filter(item => item.analysisId === analysisId);
+  });
+  return result;
+}
+
+export function getJobById(jobId: string) {
+  let result: Job | null = null;
+  jobs.subscribe(value => {
+    result = value.find(item => item.id === jobId) || null;
+  });
   return result;
 }
 

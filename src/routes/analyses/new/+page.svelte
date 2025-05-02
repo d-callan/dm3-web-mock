@@ -7,12 +7,15 @@
   import Form from '$lib/components/Form.svelte';
   import FormField from '$lib/components/FormField.svelte';
   import FileInput from '$lib/components/FileInput.svelte';
+  import Select from '$lib/components/Select.svelte';
   import TableOfContents from '$lib/components/TableOfContents.svelte';
   import { goto } from '$app/navigation';
   import { addAnalysis, addJobIdToAnalysis } from '$lib/stores/analyses';
-  import { addJob as addJobToStore } from '$lib/stores/jobs';
+  import { addJob as addJobToStore, jobs } from '$lib/stores/jobs';
+  import type { Job } from '$lib/stores/jobs';
   import { onMount } from 'svelte';
   import { base } from '$app/paths';
+  import { methods } from '$lib/data/methods';
 
   let activeSection = 'import';
 
@@ -24,7 +27,9 @@
   // Import previous analysis
   let selectedImportMethod = 'id';
   let analysisId = '';
-  let jsonFile: File | null = null;
+  let selectedMethod = '';
+  let file: File | null = null;
+  let fileContents: string | null = null;
 
   // Upload new dataset
   let analysisName = '';
@@ -50,6 +55,20 @@
     return () => window.removeEventListener('scroll', updateActiveSection);
   });
 
+  // Watch for changes in the file value
+  $: if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result;
+      if (typeof result === 'string') {
+        fileContents = result;
+      }
+    };
+    reader.readAsText(file);
+  } else {
+    fileContents = null;
+  }
+
   function handleImportSubmit(data: Record<string, any>) {
     if (selectedImportMethod === 'id') {
       // Handle analysis ID submission
@@ -62,23 +81,38 @@
       });
       goto(`${base}/analyses`);
     } else {
-      // TODO: write functions to parse JSON files
-      // In a real app, we would parse the JSON file here
+      // Handle JSON file upload
       const analysisId = addAnalysis({
         name: 'Imported Analysis',
         description: 'Imported from HyPhy JSON file',
-        datasetId: 'TODO: Parse from JSON',
+        datasetId: 'N/A',
         sourceType: 'imported_json'
       });
 
-      // Create a completed job for this imported analysis
+      // Create a completed job with temporary values
       const jobId = addJobToStore({
         analysisId,
-        method: 'TODO: Parse from JSON',
+        method: methods.find(m => m.id === selectedMethod)?.name || 'Unknown Method',
         status: 'Done',
         configuration: 'TODO: Parse from JSON',
-        resultsUrl: '/analyses/view'
+        resultsUrl: '', // Will update this after getting the jobId
+        resultsData: null // Will update this with file contents
       });
+
+      // Update the job with the correct resultsUrl and resultsData
+      jobs.update((items: Job[]) => {
+        return items.map((item: Job) => {
+          if (item.id === jobId) {
+            return {
+              ...item,
+              resultsUrl: `${base}/analyses/${analysisId}/jobs/${jobId}/result`,
+              resultsData: fileContents // This should be the JSON string from the file upload
+            };
+          }
+          return item;
+        });
+      });
+
       addJobIdToAnalysis(analysisId, jobId);
       goto(`${base}/analyses`);
     }
@@ -138,13 +172,25 @@
                       disabled={!selected}
                     />
                   {:else if option.value === 'json'}
-                    <FileInput
-                      accept=".json"
-                      bind:value={jsonFile}
-                      disabled={!selected}
-                      showButton={false}
-                      required={selectedImportMethod === 'json'}
-                    />
+                    <div class="json-upload">
+                      <Select
+                        name="method-select"
+                        label="HyPhy Method"
+                        bind:value={selectedMethod}
+                        options={methods.map(m => ({
+                          value: m.id,
+                          label: m.name
+                        }))}
+                        disabled={!selected}
+                      />
+                      <FileInput
+                        accept=".json"
+                        bind:value={file}
+                        disabled={!selected}
+                        showButton={false}
+                        required={selectedImportMethod === 'json'}
+                      />
+                    </div>
                   {/if}
                 </svelte:fragment>
               </RadioGroup>
@@ -152,7 +198,7 @@
               <Button 
                 variant="primary"
                 type="submit"
-                disabled={selectedImportMethod === 'id' ? !analysisId : !jsonFile}
+                disabled={selectedImportMethod === 'id' ? !analysisId : !fileContents || !selectedMethod}
               >
                 Import Analysis
               </Button>
@@ -260,6 +306,9 @@
     gap: var(--dm-spacing-lg);
   }
 
-
-
+  .json-upload {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dm-spacing-md);
+  }
 </style>
