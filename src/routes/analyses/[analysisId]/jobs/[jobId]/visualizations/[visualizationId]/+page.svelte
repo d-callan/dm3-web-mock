@@ -165,10 +165,6 @@ console.log(job?.resultsData)
     padding: 1rem;
   }
 
-  .visualizations > div {
-    min-height: 300px;
-  }
-
   .error {
     color: red;
     padding: 1rem;

@@ -7,7 +7,7 @@ const __dirname = path.dirname(__filename);
 
 async function copyGlyphs() {
   try {
-    const sourceDir = path.join(__dirname, '../node_modules/hyphy-eye/dist/glyphs');
+    const sourceDir = path.join(__dirname, '../node_modules/@veg/hyphy-eye/dist/glyphs');
     const targetDir = path.join(__dirname, '../static/glyphs');
 
     // Create target directory if it doesn't exist
