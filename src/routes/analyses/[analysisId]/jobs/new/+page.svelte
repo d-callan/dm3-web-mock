@@ -341,6 +341,7 @@
     }
   }
 
+  // WebAssembly is always enabled for now as server-based backend is not yet implemented
   let wasm = true;
 </script>
 
@@ -451,10 +452,11 @@
             name="wasm"
             bind:checked={wasm}
             labelPosition="right"
+            disabled={true}
           />
           <TextBlock size="sm" variant="muted">
-            When enabled, the job will run directly in your browser using WebAssembly.
-            When disabled, the job will be sent to the server for processing.
+            Jobs currently run directly in your browser using WebAssembly.
+            Server-based processing will be available in a future update.
           </TextBlock>
           
           {#if showJobProgress && !wasm}

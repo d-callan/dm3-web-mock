@@ -4,6 +4,7 @@
   export let checked = false;
   export let name = '';
   export let labelPosition: 'left' | 'right' = 'right';
+  export let disabled = false;
 </script>
 
 <label class="dm-toggle" class:dm-toggle--label-right={labelPosition === 'right'}>
@@ -20,6 +21,7 @@
     class="dm-toggle__input" 
     bind:checked
     {name}
+    {disabled}
     on:change
   />
   <span class="dm-toggle__slider"></span>
