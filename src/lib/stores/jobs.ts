@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 
 export interface Job {
   id: string;
@@ -26,17 +26,51 @@ if (typeof window !== 'undefined') {
   });
 }
 
+// Generate a hash from the job parameters to use as a unique identifier
+export function generateJobHash(analysisId: string, method: string, configuration: string): string {
+  // Combine the parameters into a single string
+  const hashInput = `${analysisId}:${method}:${configuration}`;
+  
+  // Use a simple hash function
+  let hash = 0;
+  for (let i = 0; i < hashInput.length; i++) {
+    const char = hashInput.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  
+  // Convert to a hex string and ensure it's positive
+  return Math.abs(hash).toString(16);
+}
+
+// Find a job by its hash
+export function findJobByHash(analysisId: string, method: string, configuration: string): Job | null {
+  const hash = generateJobHash(analysisId, method, configuration);
+  const allJobs = get(jobs);
+  
+  return allJobs.find(job => job.id === hash) || null;
+}
+
 export function addJob(job: Omit<Job, 'id' | 'createdAt'>) {
-  let jobId = '';
-  jobs.update(items => {
-    const newJob = {
-      ...job,
-      id: crypto.randomUUID(),
-      createdAt: new Date().toISOString()
-    };
-    jobId = newJob.id;
-    return [...items, newJob];
-  });
+  // Generate a hash-based ID for the job
+  const jobId = generateJobHash(job.analysisId, job.method, job.configuration);
+  
+  // Check if a job with this hash already exists
+  const existingJobs = get(jobs);
+  const jobExists = existingJobs.some(existingJob => existingJob.id === jobId);
+  
+  // If the job doesn't exist, add it
+  if (!jobExists) {
+    jobs.update(items => {
+      const newJob = {
+        ...job,
+        id: jobId,
+        createdAt: new Date().toISOString()
+      };
+      return [...items, newJob];
+    });
+  }
+  
   return jobId;
 }
 
@@ -46,6 +80,18 @@ export function updateJobResults(jobId: string, resultsJson: string) {
       return {
         ...item,
         resultsData: resultsJson
+      };
+    }
+    return item;
+  }));
+}
+
+export function updateJobStatus(jobId: string, status: string) {
+  jobs.update(items => items.map(item => {
+    if (item.id === jobId) {
+      return {
+        ...item,
+        status
       };
     }
     return item;

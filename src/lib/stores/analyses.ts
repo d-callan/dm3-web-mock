@@ -8,7 +8,8 @@ export interface Analysis {
   id: string;
   name: string;
   description: string;
-  datasetId: string;
+  alignmentData?: string; // Alignment file content
+  treeData?: string; // Tree file content (optional)
   sourceType: AnalysisSourceType;
   jobIds: string[];
   createdAt: string;
@@ -42,17 +43,7 @@ export function addAnalysis(analysis: Omit<Analysis, 'id' | 'createdAt' | 'jobId
     return [...items, newAnalysis];
   });
 
-  // Create an initial job based on analysis source type
-  if (analysis.sourceType === 'new') {
-    const jobId = addJobToStore({
-      analysisId: newAnalysisId,
-      method: 'PLACEHOLDER',
-      status: 'Not Started',
-      configuration: 'Default configuration',
-      resultsUrl: '/analyses/view'
-    });
-    addJobIdToAnalysis(newAnalysisId, jobId);
-  }
+  // No longer automatically creating placeholder jobs for new analyses
 
   return newAnalysisId;
 }

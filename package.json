@@ -20,6 +20,7 @@
 		"copy-glyphs": "node scripts/copy-glyphs.js"
 	},
 	"dependencies": {
+		"@biowasm/aioli": "^3.2.1",
 		"@observablehq/plot": "^0.6.13",
 		"@observablehq/stdlib": "^5.8.5",
 		"@veg/hyphy-eye": "^0.1.2",

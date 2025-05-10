@@ -35,7 +35,9 @@
   let analysisName = '';
   let description = '';
   let alignmentFile: File | null = null;
+  let alignmentContent: string | null = null;
   let treeFile: File | null = null;
+  let treeContent: string | null = null;
 
   function updateActiveSection() {
     const scrollY = window.scrollY;
@@ -68,6 +70,34 @@
   } else {
     fileContents = null;
   }
+  
+  // Watch for changes in the alignment file
+  $: if (alignmentFile) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result;
+      if (typeof result === 'string') {
+        alignmentContent = result;
+      }
+    };
+    reader.readAsText(alignmentFile);
+  } else {
+    alignmentContent = null;
+  }
+  
+  // Watch for changes in the tree file
+  $: if (treeFile) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result;
+      if (typeof result === 'string') {
+        treeContent = result;
+      }
+    };
+    reader.readAsText(treeFile);
+  } else {
+    treeContent = null;
+  }
 
   function handleImportSubmit(data: Record<string, any>) {
     if (selectedImportMethod === 'id') {
@@ -76,7 +106,6 @@
       addAnalysis({
         name: `Analysis ${data.analysisId}`,
         description: `Imported analysis with ID: ${data.analysisId}`,
-        datasetId: data.analysisId,
         sourceType: 'imported_id'
       });
       goto(`${base}/analyses`);
@@ -85,7 +114,6 @@
       const analysisId = addAnalysis({
         name: 'Imported Analysis',
         description: 'Imported from HyPhy JSON file',
-        datasetId: 'N/A',
         sourceType: 'imported_json'
       });
 
@@ -120,12 +148,21 @@
 
   function handleNewAnalysisSubmit(data: Record<string, any>) {
     // Handle new analysis submission
+    if (!alignmentContent) {
+      console.error('No alignment content available');
+      return;
+    }
+    
+    // Add the analysis with the alignment data
     addAnalysis({
       name: data.analysisName,
       description: data.description || '',
-      datasetId: crypto.randomUUID(), // Temporary, should come from alignment file
+      alignmentData: alignmentContent || undefined, // Convert null to undefined
+      treeData: treeContent || undefined, // Convert null to undefined
       sourceType: 'new'
     });
+    
+    console.log('Created new analysis with alignment data, length:', alignmentContent.length);
     goto(`${base}/analyses`);
   }
 
