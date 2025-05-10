@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let options: { value: string; label: string }[];
+  export let options: { value: string; label: string; disabled?: boolean }[];
   export let name: string;
   export let value: string;
 </script>
@@ -14,6 +14,7 @@
           bind:group={value}
           value={option.value}
           class="dm-radio__input"
+          disabled={option.disabled}
         />
         <span class="dm-radio__custom"></span>
         <span class="dm-radio__label">{option.label}</span>

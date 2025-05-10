@@ -25,7 +25,7 @@
   ];
 
   // Import previous analysis
-  let selectedImportMethod = 'id';
+  let selectedImportMethod = 'json'; // Default to JSON upload instead of ID
   let analysisId = '';
   let selectedMethod = '';
   let file: File | null = null;
@@ -100,15 +100,19 @@
   }
 
   function handleImportSubmit(data: Record<string, any>) {
+    // Only handle JSON upload for now
+    // The ID option is disabled in the UI
     if (selectedImportMethod === 'id') {
       // Handle analysis ID submission
       // TODO: an api call, to an endpoint that doesnt yet exist
-      addAnalysis({
-        name: `Analysis ${data.analysisId}`,
-        description: `Imported analysis with ID: ${data.analysisId}`,
-        sourceType: 'imported_id'
-      });
-      goto(`${base}/analyses`);
+      //addAnalysis({
+      //  name: `Analysis ${data.analysisId}`,
+      //  description: `Imported analysis with ID: ${data.analysisId}`,
+      //  sourceType: 'imported_id'
+      //});
+      //goto(`${base}/analyses`);
+      console.log('Analysis ID import is not supported yet');
+      return;
     } else {
       // Handle JSON file upload
       const analysisId = addAnalysis({
@@ -194,7 +198,7 @@
                 name="import-method"
                 bind:value={selectedImportMethod}
                 options={[
-                  { value: 'id', label: 'Enter Analysis ID' },
+                  { value: 'id', label: 'Enter Analysis ID (Coming Soon)', disabled: true },
                   { value: 'json', label: 'Upload HyPhy Results JSON' }
                 ]}
               >
