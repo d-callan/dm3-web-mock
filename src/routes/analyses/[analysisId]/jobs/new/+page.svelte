@@ -50,6 +50,16 @@
   let duplicateJobId = '';
   let currentProcess: any = null; // Store reference to the current running process
   
+  // Subscribe to the jobs store to keep the local jobStatus in sync
+  // This ensures we reflect status changes made by runHyPhyJob
+  $: if (currentJobId && $jobs) {
+    const currentJob = $jobs.find(job => job.id === currentJobId);
+    if (currentJob) {
+      jobStatus = currentJob.status;
+      console.log(`Job status updated from store: ${jobStatus}`);
+    }
+  }
+  
   async function initializeHyPhy() {
     console.log('Initializing HyPhy...');
     hyphyLoaded = false;

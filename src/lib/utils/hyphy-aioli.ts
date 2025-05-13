@@ -227,6 +227,11 @@ export async function runHyPhyJob(
   // is already writing to the store
   
   try {
+    // Update job status to "Running"
+    // This is the key change to fix the issue
+    const { updateJobStatus } = await import('$lib/stores/jobs');
+    updateJobStatus(jobId, 'Running');
+    
     // Mount the alignment file
     const inputFiles = await instance.mount([
       { name: 'user.nex', data: alignmentContent }
