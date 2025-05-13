@@ -16,6 +16,8 @@
   import { onMount } from 'svelte';
   import { base } from '$app/paths';
   import { methods } from '$lib/data/methods';
+  import { initHyPhy, validateAlignment } from '$lib/utils/hyphy-aioli';
+  import { hyphyAioliStore } from '$lib/stores/hyphy-aioli';
 
   let activeSection = 'import';
 
@@ -38,6 +40,9 @@
   let alignmentContent: string | null = null;
   let treeFile: File | null = null;
   let treeContent: string | null = null;
+  let validationData: string | null = null;
+  let validating = false;
+  let validationError: string | null = null;
 
   function updateActiveSection() {
     const scrollY = window.scrollY;
@@ -78,11 +83,25 @@
       const result = e.target?.result;
       if (typeof result === 'string') {
         alignmentContent = result;
+        // Reset validation data when a new file is uploaded
+        validationData = null;
+        validationError = null;
+        // Auto-validate the alignment when a file is uploaded
+        validating = true;
+        validateAlignment(result).then(data => {
+          validationData = data;
+          validating = false;
+        }).catch(error => {
+          validationError = error instanceof Error ? error.message : 'Unknown error during validation';
+          validating = false;
+        });
       }
     };
     reader.readAsText(alignmentFile);
   } else {
     alignmentContent = null;
+    validationData = null;
+    validationError = null;
   }
   
   // Watch for changes in the tree file
@@ -150,24 +169,47 @@
     }
   }
 
-  function handleNewAnalysisSubmit(data: Record<string, any>) {
+  // Initialize HyPhy on mount
+  onMount(() => {
+    initHyPhy().catch(error => {
+      console.error('Failed to initialize HyPhy:', error);
+    });
+  });
+
+  // Subscribe to HyPhy store to track loading state and errors
+  $: ({ loading: hyphyLoading, error: hyphyError } = $hyphyAioliStore);
+
+  async function handleNewAnalysisSubmit(data: Record<string, any>) {
     // Handle new analysis submission
     if (!alignmentContent) {
       console.error('No alignment content available');
       return;
     }
     
-    // Add the analysis with the alignment data
-    addAnalysis({
-      name: data.analysisName,
-      description: data.description || '',
-      alignmentData: alignmentContent || undefined, // Convert null to undefined
-      treeData: treeContent || undefined, // Convert null to undefined
-      sourceType: 'new'
-    });
-    
-    console.log('Created new analysis with alignment data, length:', alignmentContent.length);
-    goto(`${base}/analyses`);
+    try {
+      // Validate the alignment if not already validated
+      if (!validationData) {
+        validating = true;
+        validationData = await validateAlignment(alignmentContent);
+        validating = false;
+      }
+      
+      // Add the analysis with the alignment data and validation results
+      addAnalysis({
+        name: data.analysisName,
+        description: data.description || '',
+        alignmentData: alignmentContent || undefined, // Convert null to undefined
+        treeData: treeContent || undefined, // Convert null to undefined
+        validationData: validationData || undefined, // Add validation data
+        sourceType: 'new'
+      });
+      
+      console.log('Created new analysis with alignment data, length:', alignmentContent.length);
+      goto(`${base}/analyses`);
+    } catch (error) {
+      console.error('Failed to create analysis:', error);
+      validationError = error instanceof Error ? error.message : 'Unknown error creating analysis';
+    }
   }
 
   const importOptions = [
@@ -276,13 +318,29 @@
 
                 <FileInput
                   label="Alignment"
-                  accept=".fasta,.fas,.fa,.aln"
-                  buttonText="Select Alignment File"
+                  accept=".fasta,.nex,.nexus,.fa,.nxs,.fas,.phy,.phylip"
                   bind:value={alignmentFile}
-                  showButton={false}
                   required
-                  labelPosition="above"
-                />
+                  showFilename={false}
+                  showButton={false}
+                >
+                  {#if validating}
+                    <span class="file-status validating">
+                      <div class="small-loader"></div>
+                      <span>Validating...</span>
+                    </span>
+                  {:else if validationData && !validationError}
+                    {#if JSON.parse(validationData)?.FILE_INFO?.goodtree}
+                      <span class="file-status success">Validated successfully</span>
+                    {:else}
+                      <span class="file-status error">Validation failed</span>
+                    {/if}
+                  {:else if validationError}
+                    <span class="file-status error">Error: {validationError}</span>
+                  {/if}
+                </FileInput>
+                
+                <!-- Validation status is now shown inline with the file input -->
 
                 <FileInput
                   label="Tree"
@@ -291,6 +349,7 @@
                   bind:value={treeFile}
                   showButton={false}
                   labelPosition="above"
+                  showFilename={false}
                 />
 
                 <Button 
@@ -313,43 +372,68 @@
 
 <style>
   .page-layout {
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    gap: var(--dm-spacing-xl);
-    align-items: start;
+    display: flex;
+    gap: 2rem;
   }
 
   .page-layout__sidebar {
-    position: sticky;
-    top: 0;
-    max-height: 100vh;
-    overflow-y: auto;
-    padding: var(--dm-spacing-lg) 0;
+    width: 15rem;
+    flex-shrink: 0;
   }
 
   .page-layout__content {
-    max-width: 800px;
+    flex-grow: 1;
   }
 
   .analysis-section {
-    margin-bottom: var(--dm-spacing-xl);
-  }
-
-  .form-fields {
-    display: flex;
-    flex-direction: column;
-    gap: var(--dm-spacing-lg);
+    margin-bottom: 2rem;
+    scroll-margin-top: 2rem;
   }
 
   .import-options {
     display: flex;
     flex-direction: column;
-    gap: var(--dm-spacing-lg);
+    gap: 1rem;
   }
 
   .json-upload {
     display: flex;
     flex-direction: column;
-    gap: var(--dm-spacing-md);
+    gap: 0.5rem;
+  }
+  
+  /* File status indicators */
+  .file-status {
+    margin-left: 0.5rem;
+    font-size: 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .file-status.success {
+    color: #28a745;
+  }
+  
+  .file-status.error {
+    color: #dc3545;
+  }
+  
+  .file-status.validating {
+    color: #6c757d;
+  }
+  
+  .small-loader {
+    width: 0.875rem;
+    height: 0.875rem;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
 </style>

@@ -7,6 +7,7 @@
   export let label = '';
   export let required = false;
   export let labelPosition: 'above' | 'inline' = 'above';
+  export let showFilename = true;
 
   $: displayLabel = required ? `${label}*` : label;
 
@@ -29,9 +30,10 @@
       {disabled}
       on:change={handleFileSelect}
     />
-    {#if value}
+    {#if value && showFilename}
       <span class="dm-file-input__text">{value.name}</span>
     {/if}
+    <slot></slot>
   </div>
   {#if showButton}
     <button class="dm-button dm-button--primary dm-button--block" disabled={!value} on:click>

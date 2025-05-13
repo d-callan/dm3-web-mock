@@ -25,5 +25,6 @@ declare module '@biowasm/aioli' {
     exec(command: string): Promise<ExecResult>;
     mount(files: MountFileOptions[]): Promise<string[]>;
     download(path: string): Promise<string>;
+    callback?: (payload: any) => void;
   }
 }

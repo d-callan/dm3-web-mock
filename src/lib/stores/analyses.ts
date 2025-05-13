@@ -10,6 +10,7 @@ export interface Analysis {
   description: string;
   alignmentData?: string; // Alignment file content
   treeData?: string; // Tree file content (optional)
+  validationData?: string; // HyPhy alignment validation results
   sourceType: AnalysisSourceType;
   jobIds: string[];
   createdAt: string;

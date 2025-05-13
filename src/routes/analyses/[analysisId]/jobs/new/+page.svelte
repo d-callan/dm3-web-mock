@@ -22,7 +22,8 @@
   import type { Job } from '$lib/stores/jobs';
   import { base } from '$app/paths';
   import { onMount } from 'svelte';
-  import Aioli from '@biowasm/aioli';
+  import { initHyPhy, runHyPhyJob } from '$lib/utils/hyphy-aioli';
+  import { hyphyAioliStore } from '$lib/stores/hyphy-aioli';
 
   // Get the analysis ID from the URL
   const analysisId = $page.params.analysisId;
@@ -40,7 +41,6 @@
   // Aioli instance
   let hyphyInstance: any;
   let hyphyLoaded = false;
-  let hyphyOutput = '';
   let isRunningJob = false;
   let currentJobId = '';
   let jobStatus = '';
@@ -49,7 +49,7 @@
   let showDuplicateJobModal = false;
   let duplicateJobId = '';
   let currentProcess: any = null; // Store reference to the current running process
-
+  
   async function initializeHyPhy() {
     console.log('Initializing HyPhy...');
     hyphyLoaded = false;
@@ -60,26 +60,24 @@
           reject(new Error('HyPhy initialization timed out'));
         }, 30000); // 30 second timeout
       });
-
-      console.log('Creating Aioli instance...');
-      hyphyInstance = await new Aioli(
-        {
-          tool: 'hyphy',
-          version: "2.5.70",
-          urlPrefix: 'https://data.hyphy.org/web/biowasm'
-        },
-        {
-          printInterleaved: false,
-          callback: updateHyphyProgress
-        }
-      );
       
-      console.log('Aioli instance created successfully');
-      console.log('Aioli initialized, checking version...');
+      // Initialize HyPhy using our utility
+      // The output will be captured in the store
+      await initHyPhy();
       
+      // Get the instance from the store
+      const store = get(hyphyAioliStore);
+      hyphyInstance = store.instance;
+      
+      if (!hyphyInstance) {
+        throw new Error('Failed to initialize HyPhy instance');
+      }
+      
+      console.log('HyPhy initialized, checking version...');
+      
+      // Check the HyPhy version
       const result = await hyphyInstance.exec('hyphy --version');
-      hyphyOutput = result.stdout;
-      console.log('HyPhy version:', hyphyOutput);
+      console.log('HyPhy version:', result.stdout);
       
       hyphyLoaded = true;
       console.log('HyPhy loaded successfully');
@@ -97,12 +95,8 @@
     await initializeHyPhy();
   });
   
-  function updateHyphyProgress(payload: any) {
-    if (payload.type === 'print') {
-      console.log(payload.text);
-      hyphyOutput += payload.text + '\n';
-    }
-  }
+  // Make sure we track the HyPhy output from the store
+  $: hyphyOutput = $hyphyAioliStore.output;
   
   // Initialize parameter values when method changes
   $: if (selectedMethod) {
@@ -129,108 +123,6 @@
 
   function handleMethodChange(event: CustomEvent<string>) {
     selectedMethod = event.detail;
-  }
-
-  async function runHyPhyJob(jobId: string, methodId: string, alignmentData: string) {
-    if (!hyphyLoaded || !hyphyInstance) {
-      console.error('HyPhy not loaded');
-      return;
-    }
-    
-    isRunningJob = true;
-    updateJobStatus(jobId, 'Running');
-    jobStatus = 'Running';
-    
-    try {
-      // Get the command for the selected method
-      const methodName = methods.find(method => method.id === methodId)?.name || '';
-      const methodCommand = getHyPhyCommand(methodId);
-      
-      if (!methodCommand) {
-        throw new Error(`No command found for method ${methodName}`);
-      }
-      
-      // Mount the alignment data
-      const inputFiles = await hyphyInstance.mount([
-        { name: 'input.nex', data: alignmentData }
-      ]);
-      
-      // Build the command with parameters
-      let command = `hyphy ${methodCommand}`;
-      
-      // Add the input file
-      command += ` ${inputFiles[0]}`;
-      command += ` --output /shared/data/${jobId}_results.json`;
-
-      // Add configuration parameters as CLI arguments
-      Object.entries(paramValues).forEach(([key, value]) => {
-        // Skip alignment and tree parameters as they're handled separately
-        if (key === 'alignment' || key === 'tree') return;
-        
-        // Format the parameter based on its type
-        if (typeof value === 'boolean') {
-          // For boolean parameters, only add them if true
-          if (value) {
-            command += ` --${key}`;
-          }
-        } else if (value !== null && value !== undefined && value !== '') {
-          // For other parameters, add them with their values
-          command += ` --${key} ${value}`;
-        }
-      });
-      
-      console.log('Running HyPhy command:', command);
-      hyphyOutput = `Running ${methodName} with command:\n${command}\n\n`;
-      
-      // Execute the command
-      currentProcess = hyphyInstance.exec(command);
-      const result = await currentProcess;
-      hyphyOutput += result.stdout;
-      
-      // Try to get the results JSON
-      try {
-        const jsonBlob = await hyphyInstance.download(`/shared/data/${jobId}_results.json`);
-        const response = await fetch(jsonBlob);
-        const blob = await response.blob();
-        const jsonText = await blob.text();
-        
-        // Update the job with results
-        updateJobResults(jobId, jsonText);
-        updateJobStatus(jobId, 'Completed');
-        jobStatus = 'Completed';
-      } catch (error) {
-        console.error('Error getting results JSON:', error);
-        hyphyOutput += `\nWarning: ${error instanceof Error ? error.message : String(error)}`;
-        updateJobStatus(jobId, 'Completed with warnings');
-        jobStatus = 'Completed with warnings';
-      }
-    } catch (error) {
-      console.error('Error running HyPhy job:', error);
-      hyphyOutput += `\nError: ${error instanceof Error ? error.message : String(error)}`;
-      updateJobStatus(jobId, 'Failed');
-      jobStatus = 'Failed';
-    } finally {
-      isRunningJob = false;
-    }
-  }
-  
-  function getHyPhyCommand(methodId: string): string {
-    // Map method IDs to HyPhy commands
-    const commandMap: Record<string, string> = {
-      'Absrel': 'absrel',
-      'Bgm': 'bgm',
-      'Busted': 'busted',
-      'ContrastFel': 'contrast-fel',
-      'Fel': 'fel',
-      'Fubar': 'fubar',
-      'Gard': 'gard',
-      'Meme': 'meme',
-      'Multihit': 'fmm',
-      'Relax': 'relax',
-      'Slac': 'slac'
-    };
-    
-    return commandMap[methodId] || '';
   }
 
   async function submitForm(data: Record<string, any>) {
@@ -491,7 +383,7 @@
           <!-- Job Progress Modal for WebAssembly Jobs -->
           {#if showJobModal}
             <div class="modal-backdrop" tabindex="-1" aria-modal="true" role="dialog">
-              <div class="modal" on:click|stopPropagation={() => {}} role="document">
+              <section class="modal" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h2>HyPhy Job Progress</h2>
@@ -518,10 +410,10 @@
                         {/if}
                       </div>
                       
-                      {#if hyphyOutput}
+                      {#if $hyphyAioliStore.output}
                         <div class="hyphy-output">
                           <TextBlock size="sm" variant="default"><strong>HyPhy Output:</strong></TextBlock>
-                          <pre class="output-pre">{hyphyOutput}</pre>
+                          <pre class="output-pre">{$hyphyAioliStore.output}</pre>
                         </div>
                       {/if}
                       
@@ -539,14 +431,14 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </section>
             </div>
           {/if}
           
           <!-- Duplicate Job Modal -->
           {#if showDuplicateJobModal}
             <div class="modal-backdrop" tabindex="-1" aria-modal="true" role="dialog">
-              <div class="modal" on:click|stopPropagation={() => {}} role="document">
+              <section class="modal" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h2>Duplicate Job Found</h2>
@@ -573,7 +465,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </section>
             </div>
           {/if}
           
