@@ -18,6 +18,7 @@
   import { methods } from '$lib/data/methods';
   import { initHyPhy, validateAlignment } from '$lib/utils/hyphy-aioli';
   import { hyphyAioliStore } from '$lib/stores/hyphy-aioli';
+  import DataReaderResults from '$lib/components/DataReaderResults.svelte';
 
   let activeSection = 'import';
 
@@ -43,6 +44,7 @@
   let validationData: string | null = null;
   let validating = false;
   let validationError: string | null = null;
+  let showValidationModal = false;
 
   function updateActiveSection() {
     const scrollY = window.scrollY;
@@ -212,6 +214,18 @@
     }
   }
 
+  // Function to open the validation modal
+  function openValidationModal() {
+    if (validationData) {
+      showValidationModal = true;
+    }
+  }
+
+  // Function to close the validation modal
+  function closeValidationModal() {
+    showValidationModal = false;
+  }
+
   const importOptions = [
     { value: 'id', label: 'Enter Analysis ID' },
     { value: 'json', label: 'Upload HyPhy Results JSON' }
@@ -333,7 +347,10 @@
                     {#if JSON.parse(validationData)?.FILE_INFO?.goodtree}
                       <span class="file-status success">Validated successfully</span>
                     {:else}
-                      <span class="file-status error">Validation failed</span>
+                      <span class="file-status error">
+                        Validation failed
+                        <button class="see-details-link" on:click|preventDefault={openValidationModal}>See details</button>
+                      </span>
                     {/if}
                   {:else if validationError}
                     <span class="file-status error">Error: {validationError}</span>
@@ -355,7 +372,7 @@
                 <Button 
                   variant="primary"
                   type="submit"
-                  disabled={!analysisName || !alignmentFile}
+                  disabled={!analysisName || !alignmentFile || (validationData ? !JSON.parse(validationData)?.FILE_INFO?.goodtree : true)}
                 >
                   Create Analysis
                 </Button>
@@ -369,6 +386,29 @@
     </div>
   </div>
 </Page>
+
+<!-- Validation Results Modal -->
+{#if showValidationModal && validationData}
+  <!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events -->
+  <div class="modal-backdrop" role="dialog" aria-modal="true" tabindex="-1" on:click={closeValidationModal}>
+    <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+    <div class="modal" role="document" on:click|stopPropagation={() => {}} on:keydown={(e) => e.key === 'Escape' && closeValidationModal()}>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Alignment Validation Results</h2>
+          <button class="modal-close" on:click={closeValidationModal} aria-label="Close modal">×</button>
+        </div>
+        <div class="modal-body">
+          {#if validationData}
+            <DataReaderResults jsonData={JSON.parse(validationData)} />
+          {:else}
+            <p>No validation data available.</p>
+          {/if}
+        </div>
+      </div>
+    </div>
+  </div>
+{/if}
 
 <style>
   .page-layout {
@@ -435,5 +475,77 @@
   @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+  }
+  
+  /* Modal styles */
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal {
+    background-color: white;
+    border-radius: 0.25rem;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .modal-content {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .modal-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+  
+  .modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    color: #666;
+  }
+  
+  .modal-body {
+    padding: 1rem;
+    overflow-y: auto;
+  }
+  
+  /* See details link */
+  .see-details-link {
+    background: none;
+    border: none;
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 0.5rem;
+    font-size: 0.875rem;
+  }
+  
+  .see-details-link:hover {
+    color: #0056b3;
   }
 </style>
