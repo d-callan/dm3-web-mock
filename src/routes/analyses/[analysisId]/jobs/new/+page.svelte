@@ -10,6 +10,7 @@
   import Toggle from '$lib/components/Toggle.svelte';
   import Range from '$lib/components/Range.svelte';
   import Help from '$lib/components/Help.svelte';
+  import Loading from '$lib/components/Loading.svelte';
   import Modal from '$lib/components/Modal.svelte';
   import { page } from '$app/stores';
   import { get } from 'svelte/store';
@@ -260,10 +261,14 @@
   <div class="container">
     {#if !hyphyLoaded && wasm}
       <div class="full-page-loading">
-        <div class="loader"></div>
-        <p>Loading HyPhy WASM module...</p>
-        <p class="loading-note">This may take a few moments to download (~20MB)</p>
-        <button class="skip-button" on:click={() => hyphyLoaded = true}>Skip loading and continue</button>
+        <Loading 
+          message="Loading HyPhy WASM module..." 
+          subMessage="This may take a few moments to download (~20MB)" 
+          showSkipButton={true} 
+          skipButtonText="Skip loading and continue" 
+          buttonVariant="secondary"
+          on:skip={() => hyphyLoaded = true} 
+        />
       </div>
     {:else}
       <Card title="Add Job">
@@ -532,25 +537,11 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 4rem 2rem;
-    height: 60vh;
-    width: 100%;
+    min-height: 60vh;
+    text-align: center;
   }
   
-  .loader {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 2s linear infinite;
-    margin-bottom: 1rem;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+  /* Loading animation moved to Loading component */
   
   .hyphy-output {
     margin-top: 1rem;
@@ -569,26 +560,7 @@
     white-space: pre-wrap;
   }
   
-  .loading-note {
-    margin-top: 1rem;
-    color: #666;
-    font-size: 0.9rem;
-  }
-  
-  .skip-button {
-    margin-top: 1.5rem;
-    padding: 0.5rem 1rem;
-    background-color: #f3f3f3;
-    border: 1px solid #ddd;
-    border-radius: 0.25rem;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background-color 0.2s;
-  }
-  
-  .skip-button:hover {
-    background-color: #e6e6e6;
-  }
+  /* Loading related styles moved to Loading component */
   
   .job-progress {
     margin-top: 1.5rem;

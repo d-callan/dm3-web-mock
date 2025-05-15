@@ -1,16 +1,28 @@
-<script>
+<script lang="ts">
   import { page } from '$app/stores';
   import { base } from '$app/paths';
+  import Button from '$lib/components/Button.svelte';
+  import Page from '$lib/components/Page.svelte';
 </script>
 
-<div class="error-container">
-  <h1>{$page.status}: {$page.error?.message || 'Page not found'}</h1>
-  <p>Sorry, we couldn't find what you were looking for.</p>
-  <a href="{base}/" class="back-button">Go back home</a>
-</div>
+<Page>
+  <div class="dm-error-container">
+    <div class="dm-error-content">
+      <h1 class="dm-error-title">{$page.status}: {$page.error?.message || 'Page not found'}</h1>
+      <p class="dm-error-message">Sorry, we couldn't find what you were looking for.</p>
+      <div class="dm-error-actions">
+        <Button href="{base}/" variant="primary">Go back home</Button>
+      </div>
+    </div>
+  </div>
+</Page>
 
 <style>
-  .error-container {
+  :global(body) {
+    font-family: var(--dm-font-mono);
+  }
+  
+  .dm-error-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -20,32 +32,28 @@
     padding: 2rem;
   }
 
-  h1 {
-    font-size: 2.5rem;
+  .dm-error-content {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .dm-error-title {
+    font-family: var(--dm-font-mono);
+    font-size: 2rem;
     margin-bottom: 1rem;
     color: var(--dm-primary);
   }
 
-  p {
+  .dm-error-message {
+    font-family: var(--dm-font-mono);
     font-size: 1.2rem;
     margin-bottom: 2rem;
     color: var(--dm-text);
   }
 
-  .back-button {
-    display: inline-block;
-    padding: 0.8rem 1.5rem;
-    background: var(--dm-primary);
-    color: white;
-    text-decoration: none;
-    border-radius: 0.3rem;
-    border: 2px solid #331347;
-    box-shadow: 2px 2px 0px #331347;
-    transition: transform 0.1s ease;
-  }
-
-  .back-button:hover {
-    transform: translate(1px, 1px);
-    box-shadow: 1px 1px 0px #331347;
+  .dm-error-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
   }
 </style>
