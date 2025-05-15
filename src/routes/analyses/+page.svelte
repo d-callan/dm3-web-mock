@@ -205,14 +205,16 @@
                   <div class="analysis-title">
                     <h2>{analysis.name || 'Unnamed Analysis'}</h2>
                     {#if analysis.validationData && analysis.sourceType !== 'imported_json'}
-                      <button 
-                        class="validation-link"
+                      <Button 
+                        variant="link"
                         on:click={() => openValidationModal(analysis)}
                         title="View alignment validation details"
+                        inline={true}
+                        size="sm"
                       >
                         <i class="fas fa-check-circle" aria-hidden="true"></i>
                         <span>View Validation</span>
-                      </button>
+                      </Button>
                     {/if}
                   </div>
                   <div class="analysis-metadata">
@@ -228,7 +230,7 @@
                     <div class="button-wrapper" title={analysis.sourceType === 'imported_json' ? 'Jobs cannot be added to imported HyPhy analyses' : 'Add a new job to this analysis'}>
                       <Button 
                         variant="primary" 
-                        size="sm" 
+                        size="md" 
                         maxWidth={"50px"}
                         disabled={analysis.sourceType === 'imported_json'}
                         href={`${base}/analyses/${analysis.id}/jobs/new`}
@@ -400,27 +402,7 @@
     font-weight: 600;
   }
 
-  .validation-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    background: none;
-    border: none;
-    padding: 0;
-    font-size: 0.875rem;
-    color: var(--dm-primary);
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  .validation-link:hover {
-    text-decoration: underline;
-    color: var(--dm-primary-dark);
-  }
-
-  .validation-link i {
-    font-size: 1rem;
-  }
+  /* Button styles are now handled by the Button component */
 
   .analysis-metadata {
     display: flex;

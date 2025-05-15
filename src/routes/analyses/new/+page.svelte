@@ -349,7 +349,7 @@
                     {:else}
                       <span class="file-status error">
                         Validation failed
-                        <button class="see-details-link" on:click|preventDefault={openValidationModal}>See details</button>
+                        <Button variant="link" size="sm" on:click={openValidationModal} inline={true}>See details</Button>
                       </span>
                     {/if}
                   {:else if validationError}
@@ -533,19 +533,5 @@
     overflow-y: auto;
   }
   
-  /* See details link */
-  .see-details-link {
-    background: none;
-    border: none;
-    color: #007bff;
-    text-decoration: underline;
-    cursor: pointer;
-    padding: 0;
-    margin-left: 0.5rem;
-    font-size: 0.875rem;
-  }
-  
-  .see-details-link:hover {
-    color: #0056b3;
-  }
+  /* Button styles are now handled by the Button component */
 </style>

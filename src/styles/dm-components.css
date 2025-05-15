@@ -235,121 +235,7 @@
   padding-top: 0;
 }
 
-/* Button */
-.button-wrapper {
-  display: block;
-  width: 100%;
-  margin-bottom: var(--dm-spacing-md);
-}
-
-.button-wrapper--center {
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-}
-
-.button-inner {
-  display: inline-flex;
-  width: 100%;
-  justify-content: center;
-}
-
-.dm-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--dm-spacing-md) var(--dm-spacing-lg);
-  border: 1px solid var(--dm-border-color);
-  border-radius: var(--dm-border-radius);
-  background: var(--dm-background-light);
-  color: var(--dm-text-dark);
-  font-size: 1.5rem;
-  line-height: 1.2;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.2s;
-}
-
-.dm-button:hover:not(:disabled) {
-  border-color: var(--dm-primary);
-  color: var(--dm-primary);
-}
-
-.dm-button:disabled,
-.dm-button--disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
-.dm-button--primary {
-  background: var(--dm-primary);
-  border-color: var(--dm-primary);
-  color: white;
-}
-
-.dm-button--primary:not(.dm-header .dm-button--primary):hover:not(:disabled) {
-  color: var(--dm-primary-dark);
-}
-
-.dm-header .dm-button {
-  color: white;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 0.5rem 1.25rem;
-  font-size: 22px;
-  font-weight: 300;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 
-    inset 1px 1px 0px rgba(255, 255, 255, 0.15),
-    1px 1px 0px rgba(0, 0, 0, 0.2);
-}
-
-.dm-header .dm-button:hover:not(:disabled) {
-  background-color: var(--dm-secondary);
-  border-color: var(--dm-secondary);
-  color: white;
-  transform: translateY(1px);
-  box-shadow: 
-    inset 1px 1px 0px rgba(255, 255, 255, 0.15),
-    0px 0px 0px rgba(0, 0, 0, 0.2);
-}
-
-.dm-button--secondary {
-  background: var(--dm-secondary);
-  border-color: var(--dm-secondary);
-  color: white;
-}
-
-.dm-button--secondary:hover:not(:disabled) {
-  background: var(--dm-secondary-dark);
-  border-color: var(--dm-secondary-dark);
-  color: white;
-}
-
-.dm-button--sm {
-  padding: var(--dm-spacing-xs) var(--dm-spacing-sm);
-  font-size: 0.875rem;
-}
-
-.dm-button--xl {
-  padding: var(--dm-spacing-md) var(--dm-spacing-xl);
-  font-size: 1.5rem !important;
-  min-width: 200px;
-  font-weight: 300;
-}
-
-.dm-button--lg {
-  padding: var(--dm-spacing-md) var(--dm-spacing-lg);
-  font-size: 1.25rem !important;
-  font-weight: 300;
-}
-
-.dm-button--wide {
-  width: 100%;
-}
+/* Button styles moved to Button.svelte component */
 
 /* Card */
 .dm-card {
@@ -635,14 +521,7 @@ textarea.dm-form__input {
   overflow: hidden;
 }
 
-.dm-hero .button-wrapper {
-  margin-bottom: 0;
-  width: auto;
-}
-
-.dm-hero .button-inner {
-  width: auto;
-}
+/* Button styles moved to Button.svelte component */
 
 /* Page */
 .dm-main {
@@ -1140,43 +1019,7 @@ textarea.dm-form__input {
 }
 
 /* Button Component */
-.dm-button {
-  display: inline-block;
-  background-color: var(--dm-secondary);
-  color: white;
-  padding: var(--dm-spacing-sm) var(--dm-spacing-md);
-  border-radius: var(--dm-border-radius);
-  border: var(--dm-border-width) solid var(--dm-secondary-dark);
-  cursor: pointer;
-  font-family: inherit;
-  font-size: var(--dm-font-size-base);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 
-    inset 1px 1px 0px rgba(255, 255, 255, 0.2),
-    2px 2px 0px var(--dm-secondary-dark);
-  transition: all 0.2s;
-}
-
-.dm-button:hover {
-  transform: translateY(1px);
-  box-shadow: 
-    inset 1px 1px 0px rgba(255, 255, 255, 0.2),
-    1px 1px 0px var(--dm-secondary-dark);
-}
-
-.dm-button:active {
-  transform: translateY(2px);
-  box-shadow: 
-    inset 1px 1px 0px rgba(255, 255, 255, 0.2),
-    0px 0px 0px var(--dm-secondary-dark);
-}
-
-.dm-button--wide {
-  display: block;
-  width: calc(100% - var(--dm-spacing-xl));
-  margin: var(--dm-spacing-md) auto;
-}
+/* Button styles moved to Button.svelte component */
 
 /* File Upload Component */
 .dm-upload__input {
@@ -1721,38 +1564,7 @@ textarea.dm-form__input {
 
 
 
-.dm-button--primary {
-  background-color: var(--dm-secondary);
-  color: white;
-  border: 2px solid var(--dm-secondary-dark);
-  box-shadow: 
-    inset 1px 1px 0px rgba(255, 255, 255, 0.2),
-    2px 2px 0px var(--dm-secondary-dark);
-}
-
-.dm-button--primary:hover {
-  transform: translateY(1px);
-  box-shadow: 
-    inset 1px 1px 0px rgba(255, 255, 255, 0.2),
-    1px 1px 0px var(--dm-secondary-dark);
-}
-
-.dm-button--secondary {
-  background-color: transparent;
-  color: white;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 
-    inset 1px 1px 0px rgba(255, 255, 255, 0.1),
-    2px 2px 0px rgba(0, 0, 0, 0.2);
-}
-
-.dm-button--secondary:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  transform: translateY(1px);
-  box-shadow: 
-    inset 1px 1px 0px rgba(255, 255, 255, 0.1),
-    1px 1px 0px rgba(0, 0, 0, 0.2);
-}
+/* Button styles moved to Button.svelte component */
 
 /* Dropdown Component */
 .dm-select {
