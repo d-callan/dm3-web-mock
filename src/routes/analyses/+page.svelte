@@ -1,14 +1,15 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import Page from '$lib/components/Page.svelte';
-  import Button from '$lib/components/Button.svelte';
   import Card from '$lib/components/Card.svelte';
-  import Table from '$lib/components/Table.svelte';
-  import DataReaderResults from '$lib/components/DataReaderResults.svelte';
   import Text from '$lib/components/Text.svelte';
+  import Button from '$lib/components/Button.svelte';
+  import Table from '$lib/components/Table.svelte';
+  import Modal from '$lib/components/Modal.svelte';
+  import DataReaderResults from '$lib/components/DataReaderResults.svelte';
   import { analyses, removeAnalysis } from '$lib/stores/analyses';
   import { jobs, removeJob } from '$lib/stores/jobs';
   import { base } from '$app/paths';
-  import { onMount } from 'svelte';
 
   // Function to pretty-print JSON configuration
   function formatConfiguration(config: any): string {
@@ -272,28 +273,19 @@
 </Page>
 
 <!-- Validation Results Modal -->
-{#if showValidationModal}
-  <!-- Debug info -->
-  {@const debugInfo = console.log('Modal is being rendered, currentValidationData:', currentValidationData)}
-  
-  <div class="modal-backdrop" on:click={closeValidationModal} on:keydown={(e) => e.key === 'Escape' && closeValidationModal()} tabindex="-1" role="dialog" aria-modal="true">
-    <div class="modal" on:click|stopPropagation={() => {}} role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2>Alignment Validation Results: {currentAnalysisName}</h2>
-          <button class="modal-close" on:click={closeValidationModal} aria-label="Close modal">×</button>
-        </div>
-        <div class="modal-body">
-          {#if currentValidationData}
-            <DataReaderResults jsonData={currentValidationData} />
-          {:else}
-            <p>No validation data available.</p>
-          {/if}
-        </div>
-      </div>
-    </div>
-  </div>
-{/if}
+<Modal 
+  isOpen={showValidationModal} 
+  title="Alignment Validation Results: {currentAnalysisName}" 
+  on:close={closeValidationModal}
+  maxWidth="1000px"
+  ariaLabel="Alignment Validation Results"
+>
+  {#if currentValidationData}
+    <DataReaderResults jsonData={currentValidationData} />
+  {:else}
+    <Text>No validation data available.</Text>
+  {/if}
+</Modal>
 
 <style>
   .analyses-container {
@@ -303,6 +295,8 @@
     flex-direction: column;
     gap: var(--dm-spacing-lg);
   }
+  
+
   
   .analysis-actions {
     display: flex;
@@ -453,93 +447,5 @@
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border: 0;
-  }
-
-  /* Validation styles */
-  .validation-status {
-    margin-bottom: 1rem;
-    padding: 0.5rem;
-    border-radius: 0.25rem;
-    background-color: #f8f9fa;
-  }
-
-  .validation-success {
-    color: #28a745;
-  }
-
-  .validation-error {
-    color: #dc3545;
-  }
-  
-  /* Modal styles */
-  .modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  
-  .modal {
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 90%;
-    max-width: 900px;
-    max-height: 90vh;
-    display: flex;
-    flex-direction: column;
-    z-index: 1001;
-  }
-  
-  .modal-content {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    overflow: hidden;
-  }
-  
-  .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    border-bottom: 1px solid var(--dm-border);
-  }
-  
-  .modal-header h2 {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: 600;
-  }
-  
-  .modal-close {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: var(--dm-text-muted);
-  }
-  
-  .modal-close:hover {
-    color: var(--dm-text);
-  }
-  
-  .modal-body {
-    padding: 1rem;
-    overflow-y: auto;
-    flex: 1;
-  }
-  
-  .modal-footer {
-    padding: 1rem;
-    border-top: 1px solid var(--dm-border);
-    display: flex;
-    justify-content: flex-end;
   }
 </style>

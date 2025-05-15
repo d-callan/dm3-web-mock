@@ -1,13 +1,22 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
+  import Modal from './Modal.svelte';
   export let text = '';
 
   let showModal = false;
+  
+  function toggleModal(e?: Event) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    showModal = !showModal;
+  }
 </script>
 
 <button 
   class="dm-help" 
-  on:click={() => showModal = true}
+  on:click={(e) => toggleModal(e)}
   type="button"
   aria-label="Help"
 >
@@ -15,31 +24,18 @@
 </button>
 
 {#if showModal}
-  <div 
-    class="dm-modal-backdrop" 
-    on:click={() => showModal = false} 
-    on:keydown={e => e.key === 'Escape' && (showModal = false)}
-    role="dialog"
-    aria-modal="true"
-    tabindex="-1"
-    transition:fade
+  <Modal 
+    isOpen={showModal} 
+    on:close={() => showModal = false}
+    width="400px"
+    maxWidth="90%"
+    closeOnBackdropClick={true}
+    showCloseButton={true}
+    ariaLabel="Help"
+    title=" "
   >
-    <div 
-      class="dm-modal"
-      role="document">
-      <div class="dm-modal__content">
-        <p>{text}</p>
-      </div>
-      <button 
-        class="dm-modal__close" 
-        on:click={() => showModal = false}
-        type="button"
-        aria-label="Close"
-      >
-        ×
-      </button>
-    </div>
-  </div>
+    <p class="dm-help-text">{text}</p>
+  </Modal>
 {/if}
 
 <style>
@@ -50,9 +46,9 @@
     width: 20px;
     height: 20px;
     border: 2px solid #1a0a24;
-    background: var(--dm-background);
-    color: var(--dm-text);
-    font-family: var(--dm-font-mono);
+    background: var(--dm-background, white);
+    color: var(--dm-text, #1a0a24);
+    font-family: var(--dm-font-mono, monospace);
     font-size: 14px;
     cursor: pointer;
     padding: 0;
@@ -78,73 +74,15 @@
   }
 
   .dm-help:hover {
-    background: var(--dm-primary);
+    background: var(--dm-primary, #6200ee);
     color: white;
   }
 
-  .dm-modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
+  .dm-help-text {
+    font-family: var(--dm-font-mono, monospace);
+    color: var(--dm-text, #1a0a24);
+    margin: 0;
   }
 
-  .dm-modal {
-    position: relative;
-    background: var(--dm-background);
-    padding: 1.5rem;
-    border: 2px solid #1a0a24;
-    max-width: 90%;
-    width: 400px;
-    /* Pixelated border effect */
-    clip-path: polygon(
-      0 4px,
-      4px 4px,
-      4px 0,
-      calc(100% - 4px) 0,
-      calc(100% - 4px) 4px,
-      100% 4px,
-      100% calc(100% - 4px),
-      calc(100% - 4px) calc(100% - 4px),
-      calc(100% - 4px) 100%,
-      4px 100%,
-      4px calc(100% - 4px),
-      0 calc(100% - 4px)
-    );
-    box-shadow: 
-      4px 4px 0px rgba(0, 0, 0, 0.2);
-    image-rendering: pixelated;
-  }
-
-  .dm-modal__content {
-    font-family: var(--dm-font-mono);
-    color: var(--dm-text);
-  }
-
-  .dm-modal__close {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    width: 24px;
-    height: 24px;
-    border: none;
-    background: none;
-    color: var(--dm-text);
-    font-size: 24px;
-    cursor: pointer;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .dm-modal__close:hover {
-    color: var(--dm-primary);
-  }
+  /* Modal styling is handled by the Modal component */
 </style>

@@ -240,7 +240,7 @@
   :global(.dm-button--xl) {
     font-size: 1.5rem !important;
     min-width: 200px;
-    font-weight: 600;
+    font-weight: 500;
   }
 
   /* Width variant */

@@ -1,24 +1,29 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
+  import { base } from '$app/paths';
+  
+  // Components
   import Page from '$lib/components/Page.svelte';
-  import Text from '$lib/components/Text.svelte';
   import Card from '$lib/components/Card.svelte';
-  import Button from '$lib/components/Button.svelte';
-  import RadioGroup from '$lib/components/RadioGroup.svelte';
   import Form from '$lib/components/Form.svelte';
-  import FormField from '$lib/components/FormField.svelte';
+  import Button from '$lib/components/Button.svelte';
+  import Text from '$lib/components/Text.svelte';
   import FileInput from '$lib/components/FileInput.svelte';
   import Select from '$lib/components/Select.svelte';
+  import RadioGroup from '$lib/components/RadioGroup.svelte';
+  import FormField from '$lib/components/FormField.svelte';
+  import Modal from '$lib/components/Modal.svelte';
+  import DataReaderResults from '$lib/components/DataReaderResults.svelte';
   import TableOfContents from '$lib/components/TableOfContents.svelte';
-  import { goto } from '$app/navigation';
+  
+  // Stores and utilities
   import { addAnalysis, addJobIdToAnalysis } from '$lib/stores/analyses';
   import { addJob as addJobToStore, jobs } from '$lib/stores/jobs';
   import type { Job } from '$lib/stores/jobs';
-  import { onMount } from 'svelte';
-  import { base } from '$app/paths';
   import { methods } from '$lib/data/methods';
   import { initHyPhy, validateAlignment } from '$lib/utils/hyphy-aioli';
   import { hyphyAioliStore } from '$lib/stores/hyphy-aioli';
-  import DataReaderResults from '$lib/components/DataReaderResults.svelte';
 
   let activeSection = 'import';
 
@@ -388,27 +393,19 @@
 </Page>
 
 <!-- Validation Results Modal -->
-{#if showValidationModal && validationData}
-  <!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events -->
-  <div class="modal-backdrop" role="dialog" aria-modal="true" tabindex="-1" on:click={closeValidationModal}>
-    <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-    <div class="modal" role="document" on:click|stopPropagation={() => {}} on:keydown={(e) => e.key === 'Escape' && closeValidationModal()}>
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2>Alignment Validation Results</h2>
-          <button class="modal-close" on:click={closeValidationModal} aria-label="Close modal">×</button>
-        </div>
-        <div class="modal-body">
-          {#if validationData}
-            <DataReaderResults jsonData={JSON.parse(validationData)} />
-          {:else}
-            <p>No validation data available.</p>
-          {/if}
-        </div>
-      </div>
-    </div>
-  </div>
-{/if}
+<Modal 
+  isOpen={!!(showValidationModal && validationData)} 
+  title="Alignment Validation Results" 
+  on:close={closeValidationModal}
+  maxWidth="1000px"
+  ariaLabel="Alignment Validation Results"
+>
+  {#if validationData}
+    <DataReaderResults jsonData={JSON.parse(validationData)} />
+  {:else}
+    <Text>No validation data available.</Text>
+  {/if}
+</Modal>
 
 <style>
   .page-layout {
@@ -476,62 +473,4 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
-  
-  /* Modal styles */
-  .modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  
-  .modal {
-    background-color: white;
-    border-radius: 0.25rem;
-    width: 90%;
-    max-width: 800px;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .modal-content {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    border-bottom: 1px solid #eee;
-  }
-  
-  .modal-header h2 {
-    margin: 0;
-    font-size: 1.25rem;
-  }
-  
-  .modal-close {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 0;
-    color: #666;
-  }
-  
-  .modal-body {
-    padding: 1rem;
-    overflow-y: auto;
-  }
-  
-  /* Button styles are now handled by the Button component */
 </style>

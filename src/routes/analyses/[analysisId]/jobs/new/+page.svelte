@@ -10,6 +10,7 @@
   import Toggle from '$lib/components/Toggle.svelte';
   import Range from '$lib/components/Range.svelte';
   import Help from '$lib/components/Help.svelte';
+  import Modal from '$lib/components/Modal.svelte';
   import { page } from '$app/stores';
   import { get } from 'svelte/store';
   import { jobs, updateJobResults, updateJobStatus, findJobByHash } from '$lib/stores/jobs';
@@ -391,93 +392,75 @@
           {/if}
           
           <!-- Job Progress Modal for WebAssembly Jobs -->
-          {#if showJobModal}
-            <div class="modal-backdrop" tabindex="-1" aria-modal="true" role="dialog">
-              <section class="modal" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h2>HyPhy Job Progress</h2>
-                  </div>
-                  
-                  <div class="modal-body">
-                    <div class="info-message">
-                      <TextBlock size="sm" variant="primary">
-                        <strong>Note:</strong> HyPhy is running in your browser. Please wait for the job to complete.
-                      </TextBlock>
-                    </div>
-                    
-                    <div class="job-progress">
-                      <div class="progress-header">
-                        <TextBlock size="md" variant="default"><strong>Job Status: {jobStatus}</strong></TextBlock>
-                        {#if jobStatus === 'Completed' || jobStatus === 'Completed with warnings'}
-                          <div class="status-icon completed">✓</div>
-                        {:else if jobStatus === 'Failed'}
-                          <div class="status-icon failed">✗</div>
-                        {:else if jobStatus === 'Running'}
-                          <div class="status-icon running"></div>
-                        {:else}
-                          <div class="status-icon queued"></div>
-                        {/if}
-                      </div>
-                      
-                      {#if $hyphyAioliStore.output}
-                        <div class="hyphy-output">
-                          <TextBlock size="sm" variant="default"><strong>HyPhy Output:</strong></TextBlock>
-                          <pre class="output-pre">{$hyphyAioliStore.output}</pre>
-                        </div>
-                      {/if}
-                      
-                      {#if jobStatus === 'Completed' || jobStatus === 'Completed with warnings'}
-                        <TextBlock size="sm" variant="success">Job completed successfully!</TextBlock>
-                        <div class="modal-actions">
-                          <Button variant="primary" on:click={() => { showJobModal = false; goto(`${base}/analyses`); }}>Go to Analyses</Button>
-                        </div>
-                      {:else if jobStatus === 'Failed'}
-                        <TextBlock size="sm" variant="error">Job failed.</TextBlock>
-                        <div class="modal-actions">
-                          <Button variant="primary" on:click={() => { showJobModal = false; goto(`${base}/analyses`); }}>Go to Analyses</Button>
-                        </div>
-                      {/if}
-                    </div>
-                  </div>
-                </div>
-              </section>
+          <Modal
+            isOpen={showJobModal}
+            title="HyPhy Job Progress"
+            on:close={() => {}}
+            showCloseButton={false}
+            maxWidth="800px"
+            ariaLabel="HyPhy Job Progress"
+          >
+            <div class="info-message">
+              <TextBlock size="sm" variant="primary">
+                <strong>Note:</strong> HyPhy is running in your browser. Please wait for the job to complete.
+              </TextBlock>
             </div>
-          {/if}
+            
+            <div class="job-progress">
+              <div class="progress-header">
+                <TextBlock size="md" variant="default"><strong>Job Status: {jobStatus}</strong></TextBlock>
+                {#if jobStatus === 'Completed' || jobStatus === 'Completed with warnings'}
+                  <div class="status-icon completed">✓</div>
+                {:else if jobStatus === 'Failed'}
+                  <div class="status-icon failed">✗</div>
+                {:else if jobStatus === 'Running'}
+                  <div class="status-icon running"></div>
+                {:else}
+                  <div class="status-icon queued"></div>
+                {/if}
+              </div>
+              
+              {#if $hyphyAioliStore.output}
+                <div class="hyphy-output">
+                  <TextBlock size="sm" variant="default"><strong>HyPhy Output:</strong></TextBlock>
+                  <pre class="output-pre">{$hyphyAioliStore.output}</pre>
+                </div>
+              {/if}
+              
+              {#if jobStatus === 'Completed' || jobStatus === 'Completed with warnings'}
+                <TextBlock size="sm" variant="success">Job completed successfully!</TextBlock>
+                <div class="dm-actions">
+                  <Button variant="primary" on:click={() => { showJobModal = false; goto(`${base}/analyses`); }}>Go to Analyses</Button>
+                </div>
+              {:else if jobStatus === 'Failed'}
+                <TextBlock size="sm" variant="error">Job failed.</TextBlock>
+                <div class="dm-actions">
+                  <Button variant="primary" on:click={() => { showJobModal = false; goto(`${base}/analyses`); }}>Go to Analyses</Button>
+                </div>
+              {/if}
+            </div>
+          </Modal>
           
           <!-- Duplicate Job Modal -->
-          {#if showDuplicateJobModal}
-            <div class="modal-backdrop" tabindex="-1" aria-modal="true" role="dialog">
-              <section class="modal" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h2>Duplicate Job Found</h2>
-                    <button class="modal-close" on:click={() => showDuplicateJobModal = false} aria-label="Close modal">×</button>
-                  </div>
-                  
-                  <div class="modal-body">
-                    <div class="info-message">
-                      <TextBlock size="sm" variant="primary">
-                        <strong>Note:</strong> A job with identical parameters already exists (ID: {duplicateJobId}).
-                      </TextBlock>
-                    </div>
-                    
-                    <TextBlock size="md" variant="default">
-                      To avoid duplicate work, we recommend using the existing job. If you need to run this job again with the same parameters, please delete the existing job first.
-                    </TextBlock>
-                    
-                    <div class="modal-actions">
-                      <Button variant="secondary" on:click={() => showDuplicateJobModal = false}>Close</Button>
-                      <Button variant="primary" on:click={() => { 
-                        showDuplicateJobModal = false; 
-                        goto(`${base}/analyses/${analysisId}/jobs/${duplicateJobId}`); 
-                      }}>View Existing Job</Button>
-                    </div>
-                  </div>
-                </div>
-              </section>
+          <Modal
+            isOpen={showDuplicateJobModal}
+            title="Duplicate Job Found"
+            on:close={() => showDuplicateJobModal = false}
+            maxWidth="600px"
+            ariaLabel="Duplicate Job Found"
+            showCloseButton={true}
+            closeOnBackdropClick={true}
+          >
+            <div class="info-message">
+              <TextBlock size="sm" variant="primary">
+                <strong>Note:</strong> A job with identical parameters already exists (ID: {duplicateJobId}).
+              </TextBlock>
             </div>
-          {/if}
+            
+            <TextBlock size="md" variant="default">
+              To avoid duplicate work, we recommend using the existing job. If you need to run this job again with the same parameters, please delete the existing job first.
+            </TextBlock>
+          </Modal>
           
           <div class="actions">
             <Button type="submit" variant="primary">Start Job</Button>
@@ -674,54 +657,7 @@
     margin-top: 1rem;
   }
   
-  /* Modal styles */
-  .modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
-  
-  .modal {
-    background-color: #fff;
-    border-radius: 0.25rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    width: 90%;
-    max-width: 900px; /* Increased from 600px to 900px (1.5x wider) */
-    max-height: 90vh;
-    overflow-y: auto;
-    position: relative;
-  }
-  
-  /* Removed unused confirmation-modal selector */
-  
-  .modal-content {
-    padding: 1rem;
-  }
-  
-  .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-  }
-  
-  .modal-header h2 {
-    margin: 0;
-    font-size: 1.5rem;
-  }
-  
-  /* Removed unused modal-close selectors */
-  
-  .modal-body {
-    margin-bottom: 1rem;
-  }
+  /* Modal styles are now handled by the Modal component */
   
   .info-message {
     background-color: var(--dm-color-background-secondary);
@@ -731,10 +667,10 @@
     border-radius: var(--dm-border-radius-sm);
   }
   
-  .modal-actions {
+  .dm-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 1rem;
+    gap: 0.5rem;
     margin-top: 1rem;
   }
 </style>

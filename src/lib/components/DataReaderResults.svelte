@@ -1,6 +1,43 @@
 <script lang="ts">
   import PhyloTree from './PhyloTree.svelte';
+  import Text from './Text.svelte';
+  import Card from './Card.svelte';
+  import Expandable from './Expandable.svelte';
+  import TableOfContents from './TableOfContents.svelte';
+  import Table from './Table.svelte';
+  import TableHeader from './TableHeader.svelte';
+  import TableCell from './TableCell.svelte';
   import { onMount } from 'svelte';
+  
+  // Component props
+  
+  // Define base sections for the table of contents
+  $: availableSections = [
+    { id: 'validation-status', title: 'Validation Status', available: !!jsonData?.FILE_INFO },
+    { id: 'nj-tree', title: 'NJ Tree', available: !!jsonData?.FILE_INFO?.nj },
+    { id: 'user-tree', title: 'User Tree', available: !!jsonData?.FILE_PARTITION_INFO && !!jsonData.FILE_PARTITION_INFO['0']?.usertree },
+    { id: 'sequences', title: 'Sequences', available: !!jsonData?.SEQUENCES }
+  ].filter(section => section.available);
+  
+  $: activeSection = availableSections.length > 0 ? availableSections[0].id : '';
+  
+  // Update active section based on scroll position
+  function updateActiveSection() {
+    const sectionElements = availableSections.map((section: {id: string, title: string, available: boolean}) => 
+      document.getElementById(section.id)
+    );
+    
+    for (let i = sectionElements.length - 1; i >= 0; i--) {
+      const element = sectionElements[i];
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        if (rect.top <= 100) {
+          activeSection = availableSections[i].id;
+          break;
+        }
+      }
+    }
+  }
   
   export let jsonData: any;
 
@@ -14,236 +51,281 @@
   });
 </script>
 
-<div class="data-reader-results">
-  {#if jsonData?.error}
-    <div class="error-message">
-      <p class="error-label">Error:</p>
-      <p>{jsonData.error}</p>
-    </div>
-  {:else if jsonData?.FILE_INFO}
-    <div class="validation-status">
-      <span class="status-label">Validation Status:</span>
-      <span class="status-value {passed ? 'success' : 'error'}">{passed ? 'Passed' : 'Failed'}</span>
-    </div>
+<div class="dm-data-reader-results">
+  <div class="dm-page-layout" class:dm-page-layout--full={availableSections.length === 0}>
+    {#if availableSections.length > 0}
+      <aside class="dm-page-layout__sidebar">
+        <TableOfContents sections={availableSections} {activeSection} />
+      </aside>
+    {/if}
     
-    <div class="metrics-table">
-        <table>
-          <thead>
-            <tr>
-              <th>Metric</th>
-              <th>Value</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Genetic Code ID:</td>
-              <td>{jsonData.FILE_INFO.gencodeid}</td>
-            </tr>
-            <tr>
-              <td>Good Tree:</td>
-              <td>{jsonData.FILE_INFO.goodtree ? 'Yes' : 'No'}</td>
-            </tr>
-            <tr>
-              <td>Partitions:</td>
-              <td>{jsonData.FILE_INFO.partitions}</td>
-            </tr>
-            <tr>
-              <td>Raw Sites:</td>
-              <td>{jsonData.FILE_INFO.rawsites}</td>
-            </tr>
-            <tr>
-              <td>Processed Sites:</td>
-              <td>{jsonData.FILE_INFO.sites}</td>
-            </tr>
-            <tr>
-              <td>Sequences:</td>
-              <td>{jsonData.FILE_INFO.sequences}</td>
-            </tr>
-            <tr>
-              <td>Timestamp:</td>
-              <td>{new Date(parseInt(jsonData.FILE_INFO.timestamp.trim()) * 1000).toLocaleString()}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="dm-page-layout__content" class:dm-page-layout__content--full={availableSections.length === 0} on:scroll={updateActiveSection}>
+      {#if jsonData?.error}
+        <Card>
+          <div class="dm-status dm-status-error dm-status--pill">
+            <Text variant="error" weight="medium">Error</Text>
+            <Text>{jsonData.error}</Text>
+          </div>
+        </Card>
+      {:else if jsonData?.FILE_INFO}
+        <section id="validation-status" class="dm-section">
+          <Card title="Validation Status">
+            <div class="dm-card__header">
+              <h2 class="dm-validation-title">
+                <span class="validation-status">
+                  <span class="validation-result {passed ? 'success' : 'error'}">
+                    <span class="validation-icon">
+                      {#if passed}
+                        <i class="fas fa-check-circle" aria-hidden="true"></i>
+                      {:else}
+                        <i class="fas fa-times-circle" aria-hidden="true"></i>
+                      {/if}
+                    </span>
+                    <Text variant={passed ? 'success' : 'error'} size="xl" weight="medium">
+                      {passed ? 'Passed' : 'Failed'}
+                    </Text>
+                  </span>
+                </span>
+              </h2>
+            </div>
+            
+            <div class="dm-validation-spacer"></div>
+        
+            <div class="dm-metrics-table">
+              <!-- Using a simple approach with the Table component that works with TypeScript -->
+              <Table 
+                hover 
+                striped 
+                bordered 
+                columns={[
+                  { key: 'metric', title: 'Metric' },
+                  { 
+                    key: 'value', 
+                    title: 'Value',
+                    render: (row) => {
+                      // Type assertion to avoid TypeScript errors
+                      const typedRow = row as {metric: string, value: string, variant?: string, pill?: boolean, monospace?: boolean};
+                      if (typedRow.variant) {
+                        return `<span class="dm-status-${typedRow.variant} ${typedRow.pill ? 'dm-status--pill' : ''}">${typedRow.value}</span>`;
+                      } else if (typedRow.monospace) {
+                        return `<span class="dm-text-mono">${typedRow.value}</span>`;
+                      } else {
+                        return typedRow.value;
+                      }
+                    }
+                  }
+                ]} 
+                data={[
+                  { metric: 'Genetic Code ID', value: jsonData.FILE_INFO.gencodeid },
+                  { 
+                    metric: 'Good Tree', 
+                    value: jsonData.FILE_INFO.goodtree ? 'Yes' : 'No',
+                    variant: jsonData.FILE_INFO.goodtree ? 'success' : 'error',
+                    pill: true
+                  },
+                  { metric: 'Partitions', value: jsonData.FILE_INFO.partitions },
+                  { metric: 'Raw Sites', value: jsonData.FILE_INFO.rawsites },
+                  { metric: 'Processed Sites', value: jsonData.FILE_INFO.sites },
+                  { metric: 'Sequences', value: jsonData.FILE_INFO.sequences },
+                  { 
+                    metric: 'Timestamp', 
+                    value: new Date(parseInt(jsonData.FILE_INFO.timestamp.trim()) * 1000).toLocaleString(),
+                    monospace: true
+                  }
+                ]}
+              />
+            </div>
+          </Card>
+        </section>
       
       {#if jsonData.FILE_INFO?.nj}
-        <div class="tree-section">
-          <h4>Neighbor Joining (NJ) Tree</h4>
-          <div class="tree-string">
-            <p>{jsonData.FILE_INFO.nj}</p>
-          </div>
-          <div class="tree-visualization">
-            <PhyloTree newickString={jsonData.FILE_INFO.nj} height={500} width={700} />
-          </div>
-        </div>
+        <section id="nj-tree" class="dm-section">
+          <Card title="Neighbor Joining (NJ) Tree">
+            <div class="dm-tree-visualization">
+              <PhyloTree newickString={jsonData.FILE_INFO.nj} height={500} width={700} />
+            </div>
+            <Expandable title="View Newick Tree String" defaultOpen={false}>
+              <div class="dm-code-block">
+                <Text size="sm" monospace>{jsonData.FILE_INFO.nj}</Text>
+              </div>
+            </Expandable>
+          </Card>
+        </section>
       {/if}
 
       {#if jsonData?.FILE_PARTITION_INFO && jsonData.FILE_PARTITION_INFO['0']?.usertree}
-        <div class="tree-section">
-          <h4>User Supplied Tree</h4>
-          <div class="tree-string">
-            <p>{jsonData.FILE_PARTITION_INFO['0'].usertree}</p>
-          </div>
-          <div class="tree-visualization">
-            <PhyloTree 
-              newickString={jsonData.FILE_PARTITION_INFO['0'].usertree} 
-              height={500} 
-              width={700} 
-            />
-          </div>
-        </div>
+        <section id="user-tree" class="dm-section">
+          <Card title="User Supplied Tree">
+            <div class="dm-tree-visualization">
+              <PhyloTree 
+                newickString={jsonData.FILE_PARTITION_INFO['0'].usertree} 
+                height={500} 
+                width={700} 
+              />
+            </div>
+            <Expandable title="View Newick Tree String" defaultOpen={false}>
+              <div class="dm-code-block">
+                <Text size="sm" monospace>{jsonData.FILE_PARTITION_INFO['0'].usertree}</Text>
+              </div>
+            </Expandable>
+          </Card>
+        </section>
       {/if}
       
       {#if jsonData.SEQUENCES}
-        <div class="sequences-section">
-          <h4>Sequences</h4>
-          <div class="sequences-list">
-            {#each Object.values(jsonData.SEQUENCES) as sequence}
-              {@const typedSequence = sequence as {seqindex: number, name: string}}
-              <div class="sequence-item">
-                <span class="sequence-index">{typedSequence.seqindex + 1}.</span>
-                <span class="sequence-name">{typedSequence.name}</span>
-              </div>
-            {/each}
-          </div>
-        </div>
+        <section id="sequences" class="dm-section">
+          <Card title="Sequences">
+            <div class="dm-sequences-list">
+              {#each Object.values(jsonData.SEQUENCES) as sequence}
+                {@const typedSequence = sequence as {seqindex: number, name: string}}
+                <div class="dm-list__item">
+                  <Text weight="medium">{typedSequence.seqindex + 1}.</Text>
+                  <Text>{typedSequence.name}</Text>
+                </div>
+              {/each}
+            </div>
+          </Card>
+        </section>
       {/if}
-  {:else}
-    <p class="no-data">No data available.</p>
-  {/if}
+    {:else}
+      <Card>
+        <Text variant="muted">No data available.</Text>
+      </Card>
+    {/if}
+    </div>
+  </div>
 </div>
 
 <style>
-  .data-reader-results {
-    font-family: var(--dm-font-sans);
+  .dm-data-reader-results {
+    font-family: var(--dm-font-mono);
     color: var(--dm-text);
+    font-size: var(--dm-font-size-base);
+    line-height: var(--dm-line-height);
+  }
+    
+  .dm-page-layout {
+    display: flex;
+    gap: var(--dm-spacing-xl);
   }
   
-  .results-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
+  .dm-page-layout--full {
+    display: block;
   }
   
-  .error-message {
-    margin-top: 1rem;
-    color: var(--dm-error);
+  .dm-page-layout__sidebar {
+    width: 250px;
+    flex-shrink: 0;
+    position: sticky;
+    top: var(--dm-spacing-lg);
+    align-self: flex-start;
   }
   
-  .error-label {
-    font-weight: 500;
-    margin-bottom: 0.25rem;
+  .dm-page-layout__content {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    max-width: 900px; /* Make the content area wider */
+  }
+  
+  .dm-page-layout__content--full {
+    width: 100%;
+    max-width: 1000px; /* Even wider when no sidebar */
+  }
+  
+  .dm-section {
+    margin-bottom: var(--dm-spacing-xl);
+    scroll-margin-top: var(--dm-spacing-xl);
+  }
+  
+  .dm-validation-title {
+    margin: 0;
+    font-family: var(--dm-font-mono);
+    font-size: 1.5rem;
+    width: 100%;
   }
   
   .validation-status {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    padding: 0.75rem;
-    background-color: var(--dm-background-alt, #f8f9fa);
-    border-radius: 0.25rem;
+    gap: 0.75rem;
   }
-  
-  .status-label {
-    font-weight: 500;
+
+  .validation-label {
+    font-family: var(--dm-font-family);
+    font-weight: normal;
+    color: var(--dm-color-text);
   }
-  
-  .status-value {
-    font-weight: 600;
-  }
-  
-  .status-value.success {
-    color: var(--dm-success, #28a745);
-  }
-  
-  .status-value.error {
-    color: var(--dm-error, #dc3545);
-  }
-  
-  .metrics-table {
-    margin-top: 1rem;
-    overflow-x: auto;
-  }
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 1rem;
-  }
-  
-  th, td {
-    padding: 0.5rem;
-    text-align: left;
-    border-bottom: 1px solid var(--dm-border);
-  }
-  
-  th {
-    font-weight: 600;
-    background-color: var(--dm-background-alt);
-  }
-  
-  td:first-child {
-    font-weight: 500;
-  }
-  
-  .tree-section, .sequences-section {
-    margin-top: 1.5rem;
-  }
-  
-  .tree-section h4, .sequences-section h4 {
-    font-size: 1.125rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-  }
-  
-  .tree-string {
-    padding: 0.75rem;
-    background-color: var(--dm-background-alt);
-    border-radius: 0.25rem;
-    font-family: var(--dm-font-mono);
-    font-size: 0.875rem;
-    overflow-x: auto;
-    white-space: pre-wrap;
-    word-break: break-all;
-    margin-bottom: 1rem;
-  }
-  
-  .tree-visualization {
-    border: 1px solid var(--dm-border);
-    border-radius: 0.25rem;
-    padding: 1rem;
-    background-color: white;
-    margin-bottom: 1rem;
-  }
-  
-  .sequences-list {
-    max-height: 300px;
-    overflow-y: auto;
-    border: 1px solid var(--dm-border);
-    border-radius: 0.25rem;
-    padding: 0.5rem;
-  }
-  
-  .sequence-item {
-    padding: 0.25rem 0.5rem;
+
+  .validation-result {
     display: flex;
     align-items: center;
   }
-  
-  .sequence-item:nth-child(even) {
-    background-color: var(--dm-background-alt);
-  }
-  
-  .sequence-index {
-    font-weight: 500;
+
+  .validation-icon {
+    display: inline-block;
     margin-right: 0.5rem;
-    min-width: 2rem;
+    font-size: 1.2em;
+    vertical-align: middle;
   }
   
-  .no-data {
-    color: var(--dm-text-muted);
-    margin-top: 1rem;
+  .validation-result.success .validation-icon {
+    color: var(--dm-color-success);
+  }
+  
+  .validation-result.error .validation-icon {
+    color: var(--dm-color-error);
+  }
+  
+  .dm-validation-spacer {
+    height: 1.5rem;
+  }
+  
+  .dm-tree-visualization {
+    width: 100%;
+    height: 500px;
+    border: 1px solid var(--dm-border, #ddd);
+    border-radius: var(--dm-border-radius, 4px);
+    overflow: auto;
+    margin-bottom: 1rem;
+  }
+
+  .dm-code-block {
+    font-family: var(--dm-font-mono);
+    white-space: pre-wrap;
+    background-color: var(--dm-background-alt, #f5f5f5);
+    padding: 0.5rem;
+    border-radius: var(--dm-border-radius, 4px);
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+  
+  .dm-sequences-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+  }
+  
+  .dm-list__item {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--dm-border, #eee);
+  }
+  
+  .dm-list__item:nth-child(even) {
+    background-color: var(--dm-background-alt, #f9f9f9);
+  }
+  
+  @media (max-width: 768px) {
+    .dm-page-layout {
+      flex-direction: column;
+    }
+    
+    .dm-page-layout__sidebar {
+      width: 100%;
+      position: static;
+      margin-bottom: var(--dm-spacing-lg);
+    }
   }
 </style>
